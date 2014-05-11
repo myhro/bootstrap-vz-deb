@@ -1,15 +1,15 @@
-Source: build-debian-cloud-image
+Source: bootstrap-vz
 Section: admin
 Priority: optional
 Maintainer: Debian Cloud Team <cloud-packages@lists.alioth.debian.org>
 Uploaders: Marcin Kulisz (kuLa) <debian@kulisz.net>
-Build-Depends: debhelper (>= 8.0.0), python-all
-Standards-Version: 3.9.4
-Homepage: https://github.com/andsens/build-debian-cloud
+Build-Depends: debhelper (>= 8.0.0), python-all, python
+Standards-Version: 3.9.5
+Homepage: https://github.com/andsens/bootstrap-vz
 Vcs-Git: git://anonscm.debian.org/collab-maint/build-debian-cloud.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/build-debian-cloud.git;a=summary
 
-Package: build-debian-cloud-image
+Package: bootstrap-vz
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, euca2ools,
  python-boto, python-jsonschema, python-termcolor, debootstrap

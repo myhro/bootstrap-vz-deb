@@ -1,9 +1,9 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: build-debian-cloud
-Source: https://github.com/andsens/build-debian-cloud
+Upstream-Name: bootstrap-vz
+Source: https://github.com/andsens/bootstrap-vz
 
 Files: *
-Copyright: 2012-2013 Anders Ingemann <anders@ingemann.de>
+Copyright: 2012-2014 Anders Ingemann <anders@ingemann.de>
 License: Apache-2.0
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this software except in compliance with the License.
@@ -47,7 +47,7 @@ License: BSD (2 clause)
  POSSIBILITY OF SUCH DAMAGE.
 
 Files: debian/*
-Copyright: 2013 Marcin Kulisz (kuLa) <debian@kulisz.net>
+Copyright: 2013-2014 Marcin Kulisz (kuLa) <debian@kulisz.net>
 License: GPL-2+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by

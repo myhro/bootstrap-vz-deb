@@ -1,1 +1,1 @@
-usr/share/build-debian-cloud-image/build-debian-cloud usr/bin/build-debian-cloud
+/usr/share/bootstrap-vz/bootstrap-vz /usr/bin/bootstrap-vz

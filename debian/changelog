@@ -1,4 +1,4 @@
-build-debian-cloud-image (0~20140119-1) unstable; urgency=low
+bootstrap-vz (0~20140510-1) unstable; urgency=low
 
   * Initial release (Closes: #693198)
 

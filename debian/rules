@@ -3,3 +3,8 @@
 
 %:
 	dh $@ --with=python2
+
+override_dh_auto_install:
+	python setup.py install --root=debian/bootstrap-vz --install-layout=deb --install-lib=/usr/share/bootstrap-vz --install-scripts=/usr/share/bootstrap-vz
+
+override_dh_auto_build:

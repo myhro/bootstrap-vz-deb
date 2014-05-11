@@ -1,7 +1,0 @@
-build-debian-cloud usr/share/build-debian-cloud-image
-__init__.py        usr/share/build-debian-cloud-image
-base               usr/share/build-debian-cloud-image
-common             usr/share/build-debian-cloud-image
-manifests          usr/share/build-debian-cloud-image
-plugins            usr/share/build-debian-cloud-image
-providers          usr/share/build-debian-cloud-image
