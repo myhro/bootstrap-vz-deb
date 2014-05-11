@@ -1,0 +1,5 @@
+build-debian-cloud-image (0~20140119-1) unstable; urgency=low
+
+  * Initial release (Closes: #693198)
+
+ -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Mon, 20 Jan 2014 18:36:02 +0000

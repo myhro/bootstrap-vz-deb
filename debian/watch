@@ -1,0 +1,3 @@
+version=3
+
+https://github.com/andsens/build-debian-cloud/tags .*/(\d[\d\.]+)\.tar\.gz

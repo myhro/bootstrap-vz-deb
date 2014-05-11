@@ -1,0 +1,199 @@
+.\" (C) Copyright 2012 Marcin Kulisz (kuLa) <debian@kulisz.net>,
+.TH BUILD-DEBIAN-CLOUD 1 "November 15, 2013"
+.SH NAME
+build\-debian\-cloud\-image \- program is creating Debian images to be run in cloud
+environments like Amazons EC2, OpenStack, Google Cloud Compute and other which
+are sharing API with those
+.SH SYNOPSIS
+.B build\-debian\-cloud\-image
+.RI [\-h]\ [\-\-debug]\ MANIFEST
+.SH DESCRIPTION
+build\-debian\-cloud\-image is written on python which can be fairly easily
+customised if needed. Whole configuration for the final image is provided by json
+manifest [MANIFEST]. Manifest available options are explained below in MANIFEST
+section.
+.sp 1
+.B build\-debian\-cloud\-image must be run from within AWS instance to create Debian image.
+.sp 1
+.B Default user
+to log into created image is:
+.B root
+
+.PP
+.SH [MANIFEST]
+Manifest is a json file providing final image specification, standard json rules
+apply to it and the following fields should or may be used (depending on final
+image type).
+.br
+Below are describe specific fields and fields within sections, all should be in
+strict json format put into manifest file.
+
+.B provider \-
+[ec2|kvm|virtualbox|one] depending where you want to use final image one of the
+former providers should be used
+.br
+.B virtualization \-
+[pvm|virtio|ide] ]type of vitalization which is going to be used to run final
+image
+.br
+
+.IR bootstrapper
+.RS
+.B mount_dir \-
+where all bootstraped files are going to be installed
+.br
+.B mirror \-
+Debian mirror to use to fetch all required files (suggestion:
+http://http.debian.net/debian)
+.RE
+
+.IR image
+.RS
+.B name \-
+name for the finale image
+.br
+.B description \-
+final image description which will give a bit more information how this image is
+different from others
+.B bucket \-
+[ONLY FOR S3 BACKED IMAGES] S3 bucket name for storage
+.RE
+
+.IR system
+(OS details)
+.RS
+.br
+.B release \-
+[wheezy|jessie] Debian release name
+.br
+.B architecture \-
+[amd64|i386]
+.br
+.B timezone \-
+ex. UTC
+.br
+.B locale \-
+ex. en_GB
+.br
+.B charmap \-
+ex. UTF-8
+.br
+.RE
+
+.IR volume
+(virtual HDD setup)
+.br
+.RS
+.B backing \-
+[ebs|s3|raw]
+.br
+.B filesystem \-
+any supported by the kernel
+.br
+.B size \-
+how big root main image should be
+.br
+.B loopback_dir \-
+[ONLY FOR KVM & VIRTAUALBOX PROVIDERS]
+.RE
+
+.IR plugins
+(plugins available, for specific options for each plugin please look into
+individual plugin documentation)
+.RS
+.B admin_user
+.br
+.B backports
+.br
+.B build_metadata
+.br
+.B convert_image
+.br
+.B opennebula
+.br
+.B prebootstrapped
+.br
+.B root_password
+.br
+.B user_packages
+.br
+.RE
+
+.IR credentials
+(AWS\ specific\ entries)
+.RS
+.B access\-key \-
+AWS Access Key
+.br
+.B secret\-key
+AWS Secret Key
+.br
+.B certificate \-
+[S3 BACKED IMAGES]
+.br
+.B private\-key \-
+[S3 BACKED IMAGES]
+.br
+.B user\-id \-
+[S3 BACKED IMAGES]
+.br
+.RE
+
+.PP
+.SH MANIFEST - example
+{
+  "provider":       "ec2",
+  "virtualization": "pvm",
+  "credentials":    {
+    "access-key" : null,
+    "secret-key" : null,
+    "certificate": null,
+    "private-key": null,
+    "user-id"    : null
+  },
+
+  "bootstrapper": {
+    "mount_dir": "/target",
+    "mirror"   : "http://http.debian.net/debian"
+  },
+  "image": {
+    "name"       : "debian-{release}-{architecture}-{virtualization}-{%Y}{%m}{%d}",
+    "description": "Debian {release} {architecture} AMI ({virtualization})"
+    "bucket"     : ""
+  },
+  "system": {
+    "release"     : "wheezy",
+    "architecture": "amd64",
+    "timezone"    : "UTC",
+    "locale"      : "en_US",
+    "charmap"     : "UTF-8"
+  },
+  "volume": {
+    "backing"   : "s3",
+    "filesystem": "ext4",
+    "size"      : 1024
+  },
+  "plugins": {
+    "admin_user": {
+      "enabled" : true,
+      "username": "admin"
+    },
+    "prebootstrapped": {
+      "enabled": false,
+      "image"  : null
+    }
+  }
+.br
+}
+
+.PP
+For more template manifest please have a look into
+.IR /usr/share/build-debian-cloud-image/manifests
+
+.PP
+.SH AUTHOR
+Marcin Kulisz <debian@kulisz.net>
+
+.SH SEE ALSO
+.BR debootstrap (1),
+.BR euca2ools (1).
