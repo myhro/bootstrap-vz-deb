@@ -1,0 +1,1119 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "BOOTSTRAP-VZ" "3" "June 03, 2014" "0.9" "bootstrap-vz"
+.SH NAME
+bootstrap-vz \- bootstrap-vz Documentation
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.sp
+Contents:
+.SH BASE FUNCTIONALITY
+.sp
+The base module represents concepts of the bootstrapping process that tasks can interact with
+and handles the gather, sorting and running of tasks.
+.SS Filesystem handling
+.SS Volume
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.fs.volume.Volume(partition_map)
+Represents an abstract volume.
+This class is a finite state machine and represents the state of the real volume.
+.INDENT 7.0
+.TP
+.B _before_link_dm_node(e)
+Links the volume using the device mapper
+This allows us to create a \(aqwindow\(aq into the volume that acts like a volum in itself.
+Mainly it is used to fool grub into thinking that it is working with a real volume,
+rather than a loopback device or a network block device.
+.INDENT 7.0
+.TP
+.B Parameters
+\fBe\fP (\fI_e_obj\fP) \-\- Event object containing arguments to create()
+.UNINDENT
+.sp
+Keyword arguments to link_dm_node() are:
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBlogical_start_sector\fP (\fIint\fP) \-\- The sector the volume should start at in the new volume
+.IP \(bu 2
+\fBstart_sector\fP (\fIint\fP) \-\- The offset at which the volume should begin to be mapped in the new volume
+.IP \(bu 2
+\fBsectors\fP (\fIint\fP) \-\- The number of sectors that should be mapped
+.UNINDENT
+.UNINDENT
+.sp
+Read more at: \fI\%http://manpages.debian.org/cgi\-bin/man.cgi?query=dmsetup&apropos=0&sektion=0&manpath=Debian+7.0+wheezy&format=html&locale=en\fP
+.INDENT 7.0
+.TP
+.B Raises VolumeError
+When a free block device cannot be found.
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B _before_unlink_dm_node(e)
+Unlinks the device mapping
+.UNINDENT
+.INDENT 7.0
+.TP
+.B _check_blocking(e)
+Checks whether the volume is blocked
+.INDENT 7.0
+.TP
+.B Raises VolumeError
+When the volume is blocked from being detached
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Partitionmaps
+.SS Abstract Partitionmap
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.fs.partitionmaps.abstract.AbstractPartitionMap(bootloader)
+Abstract representation of a partiton map
+This class is a finite state machine and represents the state of the real partition map
+.INDENT 7.0
+.TP
+.B _before_map(event)
+.INDENT 7.0
+.TP
+.B Raises PartitionError
+In case a partition could not be mapped.
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B _before_unmap(event)
+.INDENT 7.0
+.TP
+.B Raises PartitionError
+If the a partition cannot be unmapped
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B create(volume)
+Creates the partition map
+.INDENT 7.0
+.TP
+.B Parameters
+\fBvolume\fP (\fIVolume\fP) \-\- The volume to create the partition map on
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B get_total_size()
+Returns the total size the partitions occupy
+.INDENT 7.0
+.TP
+.B Returns
+The size of all partitions
+.TP
+.B Return type
+Bytes
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B is_blocking()
+Returns whether the partition map is blocking volume detach operations
+.INDENT 7.0
+.TP
+.B Return type
+bool
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B map(volume)
+Maps the partition map to device nodes
+.INDENT 7.0
+.TP
+.B Parameters
+\fBvolume\fP (\fIVolume\fP) \-\- The volume the partition map resides on
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B unmap(volume)
+Unmaps the partition
+.INDENT 7.0
+.TP
+.B Parameters
+\fBvolume\fP (\fIVolume\fP) \-\- The volume to unmap the partition map from
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS GPT Partitionmap
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.fs.partitionmaps.gpt.GPTPartitionMap(data, bootloader)
+Represents a GPT partition map
+.INDENT 7.0
+.TP
+.B _before_create(event)
+Creates the partition map
+.UNINDENT
+.UNINDENT
+.SS MS\-DOS Partitionmap
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.fs.partitionmaps.msdos.MSDOSPartitionMap(data, bootloader)
+Represents a MS\-DOS partition map
+Sometimes also called MBR (but that confuses the hell out of me, so ms\-dos it is)
+.UNINDENT
+.SS No Partitionmap
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.fs.partitionmaps.none.NoPartitions(data, bootloader)
+Represents a virtual \(aqNoPartitions\(aq partitionmap.
+This virtual partition map exists because it is easier for tasks to
+simply always deal with partition maps and then let the base abstract that away.
+.INDENT 7.0
+.TP
+.B get_total_size()
+Returns the total size the partitions occupy
+.INDENT 7.0
+.TP
+.B Returns
+The size of all the partitions
+.TP
+.B Return type
+Bytes
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B is_blocking()
+Returns whether the partition map is blocking volume detach operations
+.INDENT 7.0
+.TP
+.B Return type
+bool
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Partitions
+.SS Abstract partition
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.fs.partitions.abstract.AbstractPartition(size, filesystem, format_command)
+Abstract representation of a partiton
+This class is a finite state machine and represents the state of the real partition
+.INDENT 7.0
+.TP
+.B class Mount(source, destination, opts)
+Represents a mount into the partition
+.INDENT 7.0
+.TP
+.B mount(prefix)
+Performs the mount operation or forwards it to another partition
+.INDENT 7.0
+.TP
+.B Parameters
+\fBprefix\fP (\fIstr\fP) \-\- Path prefix of the mountpoint
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B unmount()
+Performs the unmount operation or asks the partition to unmount itself
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B AbstractPartition._after_mount(e)
+Mount any mounts associated with this partition
+.UNINDENT
+.INDENT 7.0
+.TP
+.B AbstractPartition._before_format(e)
+Formats the partition
+.UNINDENT
+.INDENT 7.0
+.TP
+.B AbstractPartition._before_mount(e)
+Mount the partition
+.UNINDENT
+.INDENT 7.0
+.TP
+.B AbstractPartition._before_unmount(e)
+Unmount any mounts associated with this partition
+.UNINDENT
+.INDENT 7.0
+.TP
+.B AbstractPartition.add_mount(source, destination, opts=[])
+Associate a mount with this partition
+Automatically mounts it
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBsource\fP (\fIstr,AbstractPartition\fP) \-\- The source of the mount
+.IP \(bu 2
+\fBdestination\fP (\fIstr\fP) \-\- The path to the mountpoint
+.IP \(bu 2
+\fBopts\fP (\fIlist\fP) \-\- Any options that should be passed to the mount command
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B AbstractPartition.get_end()
+Gets the end of the partition
+.INDENT 7.0
+.TP
+.B Returns
+The end of the partition
+.TP
+.B Return type
+Bytes
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B AbstractPartition.get_uuid()
+Gets the UUID of the partition
+.INDENT 7.0
+.TP
+.B Returns
+The UUID of the partition
+.TP
+.B Return type
+str
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B AbstractPartition.remove_mount(destination)
+Remove a mount from this partition
+Automatically unmounts it
+.INDENT 7.0
+.TP
+.B Parameters
+\fBdestination\fP (\fIstr\fP) \-\- The mountpoint path of the mount that should be removed
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Base partition
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.fs.partitions.base.BasePartition(size, filesystem, format_command, previous)
+Represents a partition that is actually a partition (and not a virtual one like \(aqSingle\(aq)
+.INDENT 7.0
+.TP
+.B _before_create(e)
+Creates the partition
+.UNINDENT
+.INDENT 7.0
+.TP
+.B create(volume)
+Creates the partition
+.INDENT 7.0
+.TP
+.B Parameters
+\fBvolume\fP (\fIVolume\fP) \-\- The volume to create the partition on
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B get_index()
+Gets the index of this partition in the partition map
+.INDENT 7.0
+.TP
+.B Returns
+The index of the partition in the partition map
+.TP
+.B Return type
+int
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B get_start()
+Gets the starting byte of this partition
+.INDENT 7.0
+.TP
+.B Returns
+The starting byte of this partition
+.TP
+.B Return type
+Bytes
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B map(device_path)
+Maps the partition to a device_path
+.INDENT 7.0
+.TP
+.B Parameters
+\fBdevice_path\fP (\fIstr\fP) \-\- The device patht his partition should be mapped to
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS GPT partition
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.fs.partitions.gpt.GPTPartition(size, filesystem, format_command, name, previous)
+Represents a GPT partition
+.UNINDENT
+.SS GPT swap partition
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.fs.partitions.gpt_swap.GPTSwapPartition(size, previous)
+Represents a GPT swap partition
+.UNINDENT
+.SS MS\-DOS partition
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.fs.partitions.msdos.MSDOSPartition(size, filesystem, format_command, previous)
+Represents an MS\-DOS partition
+.UNINDENT
+.SS MS\-DOS swap partition
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.fs.partitions.msdos_swap.MSDOSSwapPartition(size, previous)
+Represents a MS\-DOS swap partition
+.UNINDENT
+.SS Single
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.fs.partitions.single.SinglePartition(size, filesystem, format_command)
+Represents a single virtual partition on an unpartitioned volume
+.INDENT 7.0
+.TP
+.B get_start()
+Gets the starting byte of this partition
+.INDENT 7.0
+.TP
+.B Returns
+The starting byte of this partition
+.TP
+.B Return type
+Bytes
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Unformatted partition
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.fs.partitions.unformatted.UnformattedPartition(size, previous)
+Represents an unformatted partition
+It cannot be mounted
+.UNINDENT
+.SS Exceptions
+.INDENT 0.0
+.TP
+.B exception bootstrapvz.base.fs.exceptions.PartitionError
+Raised when an error occurs while interacting with the partitions on the volume
+.UNINDENT
+.INDENT 0.0
+.TP
+.B exception bootstrapvz.base.fs.exceptions.VolumeError
+Raised when an error occurs while interacting with the volume
+.UNINDENT
+.SS Package handling
+.SS Package list
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.pkg.packagelist.PackageList(manifest_vars, source_lists)
+Represents a list of packages
+.INDENT 7.0
+.TP
+.B class Local(path)
+A local package
+.UNINDENT
+.INDENT 7.0
+.TP
+.B class PackageList.Remote(name, target)
+A remote package with an optional target
+.UNINDENT
+.INDENT 7.0
+.TP
+.B PackageList.add(name, target=None)
+Adds a package to the install list
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBname\fP (\fIstr\fP) \-\- The name of the package to install, may contain manifest vars references
+.IP \(bu 2
+\fBtarget\fP (\fIstr\fP) \-\- The name of the target release for the package, may contain manifest vars references
+.UNINDENT
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBPackageError\fP \-\- When a package of the same name but with a different target has already been added.
+.IP \(bu 2
+\fBPackageError\fP \-\- When the specified target release could not be found.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B PackageList.add_local(package_path)
+Adds a local package to the installation list
+.INDENT 7.0
+.TP
+.B Parameters
+\fBpackage_path\fP (\fIstr\fP) \-\- Path to the local package, may contain manifest vars references
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Sources list
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.pkg.sourceslist.Source(line)
+Represents a single source line
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.pkg.sourceslist.SourceLists(manifest_vars)
+Represents a list of sources lists for apt
+.INDENT 7.0
+.TP
+.B add(name, line)
+Adds a source to the apt sources list
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBname\fP (\fIstr\fP) \-\- Name of the file in sources.list.d, may contain manifest vars references
+.IP \(bu 2
+\fBline\fP (\fIstr\fP) \-\- The line for the source file, may contain manifest vars references
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B target_exists(target)
+Checks whether the target exists in the sources list
+.INDENT 7.0
+.TP
+.B Parameters
+\fBtarget\fP (\fIstr\fP) \-\- Name of the target to check for, may contain manifest vars references
+.TP
+.B Returns
+Whether the target exists
+.TP
+.B Return type
+bool
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Preferences list
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.pkg.preferenceslist.Preference(preference)
+Represents a single preference
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.pkg.preferenceslist.PreferenceLists(manifest_vars)
+Represents a list of preferences lists for apt
+.INDENT 7.0
+.TP
+.B add(name, preferences)
+Adds a preference to the apt preferences list
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBname\fP (\fIstr\fP) \-\- Name of the file in preferences.list.d, may contain manifest vars references
+.IP \(bu 2
+\fBpreferences\fP (\fIobject\fP) \-\- The preferences
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Exceptions
+.INDENT 0.0
+.TP
+.B exception bootstrapvz.base.pkg.exceptions.PackageError
+Raised when an error occurrs while handling the packageslist
+.UNINDENT
+.INDENT 0.0
+.TP
+.B exception bootstrapvz.base.pkg.exceptions.SourceError
+Raised when an error occurs while handling the sourceslist
+.UNINDENT
+.SS Bootstrap information
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.bootstrapinfo.BootstrapInformation(manifest=None, debug=False)
+The BootstrapInformation class holds all information about the bootstrapping process.
+The nature of the attributes of this class are rather diverse.
+Tasks may set their own attributes on this class for later retrieval by another task.
+Information that becomes invalid (e.g. a path to a file that has been deleted) must be removed.
+.INDENT 7.0
+.TP
+.B _BootstrapInformation__create_manifest_vars(manifest, additional_vars={})
+Creates the manifest variables dictionary, based on the manifest contents
+and additional data.
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBmanifest\fP (\fIManifest\fP) \-\- The Manifest
+.IP \(bu 2
+\fBadditional_vars\fP (\fIdict\fP) \-\- Additional values (they will take precedence and overwrite anything else)
+.UNINDENT
+.TP
+.B Returns
+The manifest_vars dictionary
+.TP
+.B Return type
+dict
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Manifest
+.sp
+The Manifest module contains the manifest that providers and plugins use
+to determine which tasks should be added to the tasklist, what arguments various
+invocations should have etc..
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.manifest.Manifest(path)
+This class holds all the information that providers and plugins need
+to perform the bootstrapping process. All actions that are taken originate from
+here. The manifest shall not be modified after it has been loaded.
+Currently, immutability is not enforced and it would require a fair amount of code
+to enforce it, instead we just rely on tasks behaving properly.
+.INDENT 7.0
+.TP
+.B load()
+Loads the manifest.
+This function not only reads the manifest but also loads the specified provider and plugins.
+Once they are loaded, the initialize() function is called on each of them (if it exists).
+The provider must have an initialize function.
+.UNINDENT
+.INDENT 7.0
+.TP
+.B parse()
+Parses the manifest.
+Well... "parsing" is a big word.
+The function really just sets up some convenient attributes so that tasks
+don\(aqt have to access information with info.manifest.data[\(aqsection\(aq]
+but can do it with info.manifest.section.
+.UNINDENT
+.INDENT 7.0
+.TP
+.B schema_validator(data, schema_path)
+This convenience function is passed around to all the validation functions
+so that they may run a json\-schema validation by giving it the data and a path to the schema.
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBdata\fP (\fIdict\fP) \-\- Data to validate (normally the manifest data)
+.IP \(bu 2
+\fBschema_path\fP (\fIstr\fP) \-\- Path to the json\-schema to use for validation
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B validate()
+Validates the manifest using the base, provider and plugin validation functions.
+Plugins are not required to have a validate_manifest function
+.UNINDENT
+.INDENT 7.0
+.TP
+.B validation_error(message, json_path=None)
+This function is passed to all validation functions so that they may
+raise a validation error because a custom validation of the manifest failed.
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBmessage\fP (\fIstr\fP) \-\- Message to user about the error
+.IP \(bu 2
+\fBjson_path\fP (\fIlist\fP) \-\- A path to the location in the manifest where the error occurred
+.UNINDENT
+.TP
+.B Raises ManifestError
+With absolute certainty
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Tasklist
+.sp
+The tasklist module contains the TaskList class.
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.tasklist.TaskList(tasks)
+The tasklist class aggregates all tasks that should be run
+and orders them according to their dependencies.
+.INDENT 7.0
+.TP
+.B run(info, dry_run=False)
+Converts the taskgraph into a list and runs all tasks in that list
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBinfo\fP (\fIdict\fP) \-\- The bootstrap information object
+.IP \(bu 2
+\fBdry_run\fP (\fIbool\fP) \-\- Whether to actually run the tasks or simply step through them
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B bootstrapvz.base.tasklist.check_ordering(task)
+Checks the ordering of a task in relation to other tasks and their phases.
+.sp
+This function checks for a subset of what the strongly connected components algorithm does,
+but can deliver a more precise error message, namely that there is a conflict between
+what a task has specified as its predecessors or successors and in which phase it is placed.
+.INDENT 7.0
+.TP
+.B Parameters
+\fBtask\fP (\fITask\fP) \-\- The task to check the ordering for
+.TP
+.B Raises TaskListError
+If there is a conflict between task precedence and phase precedence
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B bootstrapvz.base.tasklist.create_list(subset)
+Creates a list of all the tasks that should be run.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B bootstrapvz.base.tasklist.get_all_classes(path=None, prefix=\(aq\(aq)
+Given a path to a package, this function retrieves all the classes in it
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBpath\fP (\fIstr\fP) \-\- Path to the package
+.IP \(bu 2
+\fBprefix\fP (\fIstr\fP) \-\- Name of the package followed by a dot
+.UNINDENT
+.TP
+.B Returns
+A generator that yields classes
+.TP
+.B Return type
+generator
+.TP
+.B Raises Exception
+If a module cannot be inspected.
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B bootstrapvz.base.tasklist.get_all_tasks()
+Gets a list of all task classes in the package
+.INDENT 7.0
+.TP
+.B Returns
+A list of all tasks in the package
+.TP
+.B Return type
+list
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B bootstrapvz.base.tasklist.load_tasks(function, manifest, *args)
+Calls \fBfunction\fP on the provider and all plugins that have been loaded by the manifest.
+Any additional arguments are passed directly to \fBfunction\fP\&.
+The function that is called shall accept the taskset as its first argument and the manifest
+as its second argument.
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBfunction\fP (\fIstr\fP) \-\- Name of the function to call
+.IP \(bu 2
+\fBmanifest\fP (\fIManifest\fP) \-\- The manifest
+.IP \(bu 2
+\fBargs\fP (\fIlist\fP) \-\- Additional arguments that should be passed to the function that is called
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B bootstrapvz.base.tasklist.strongly_connected_components(graph)
+Find the strongly connected components in a graph using Tarjan\(aqs algorithm.
+.sp
+Source: \fI\%http://www.logarithmic.net/pfh\-files/blog/01208083168/sort.py\fP
+.INDENT 7.0
+.TP
+.B Parameters
+\fBgraph\fP (\fIdict\fP) \-\- mapping of tasks to lists of successor tasks
+.TP
+.B Returns
+List of tuples that are strongly connected comoponents
+.TP
+.B Return type
+list
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B bootstrapvz.base.tasklist.topological_sort(graph)
+Runs a topological sort on a graph.
+.sp
+Source: \fI\%http://www.logarithmic.net/pfh\-files/blog/01208083168/sort.py\fP
+.INDENT 7.0
+.TP
+.B Parameters
+\fBgraph\fP (\fIdict\fP) \-\- mapping of tasks to lists of successor tasks
+.TP
+.B Returns
+A list of all tasks in the graph sorted according to ther dependencies
+.TP
+.B Return type
+list
+.UNINDENT
+.UNINDENT
+.SS Logging
+.sp
+This module holds functions and classes responsible for formatting the log output
+both to a file and to the console.
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.log.ConsoleFormatter(fmt=None, datefmt=None)
+Formats log statements for the console
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.log.FileFormatter(fmt=None, datefmt=None)
+Formats log statements for output to file
+Currently this is just a stub
+.UNINDENT
+.INDENT 0.0
+.TP
+.B bootstrapvz.base.log.get_log_filename(manifest_path)
+Returns the path to a logfile given a manifest
+The logfile name is constructed from the current timestamp and the basename of the manifest
+.INDENT 7.0
+.TP
+.B Parameters
+\fBmanifest_path\fP (\fIstr\fP) \-\- The path to the manifest
+.TP
+.B Returns
+The path to the logfile
+.TP
+.B Return type
+str
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B bootstrapvz.base.log.setup_logger(logfile=None, debug=False)
+Sets up the python logger to log to both a file and the console
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBlogfile\fP (\fIstr\fP) \-\- Path to a logfile
+.IP \(bu 2
+\fBdebug\fP (\fIbool\fP) \-\- Whether to log debug output to the console
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Task
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.task.Task
+The task class represents a task that can be run.
+It is merely a wrapper for the run function and should never be instantiated.
+.INDENT 7.0
+.TP
+.B classmethod run(info)
+The run function, all work is done inside this function
+.INDENT 7.0
+.TP
+.B Parameters
+\fBinfo\fP (\fIBootstrapInformation\fP) \-\- The bootstrap info object.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Phase
+.INDENT 0.0
+.TP
+.B class bootstrapvz.base.phase.Phase(name, description)
+The Phase class represents a phase a task may be in.
+It has no function other than to act as an anchor in the task graph.
+All phases are instantiated in common.phases
+.INDENT 7.0
+.TP
+.B pos()
+Gets the position of the phase
+.INDENT 7.0
+.TP
+.B Returns
+The positional index of the phase in relation to the other phases
+.TP
+.B Return type
+int
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SH COMMON
+.sp
+The common module contains features that are common to multiple providers and plugins.
+It holds both a large set of shared tasks and also various tools that are used by both
+the base module and tasks.
+.SS Volume representations
+.SS Shared tasks
+.SH PLUGINS
+.SH PROVIDERS
+.SH DEVELOPMENT GUIDELINES
+.sp
+The following guidelines should serve as general advice when
+developing providers or plugins for bootstrap\-vz. Keep in mind that
+these guidelines are not rules , they are advice on how to better add
+value to the bootstrap\-vz codebase.
+.INDENT 0.0
+.IP \(bu 2
+\fBThe manifest should always fully describe the resulting image. The
+outcome of a bootstrapping process should never depend on settings
+specified elsewhere.\fP
+.sp
+This allows others to easily reproduce any
+setup other people are running and makes it possible to share
+manifests. \fI\%The official debian EC2 images\fP
+for example can be reproduced using the manifests available
+in the manifest directory of bootstrap\-vz.
+.IP \(bu 2
+\fBThe bootstrapper should always be able to run fully unattended.\fP
+.sp
+For end users, this guideline minimizes the risk of errors. Any
+required input would also be in direct conflict with the previous
+guideline that the manifest should always fully describe the resulting
+image.
+.sp
+Additionally developers may have to run the bootstrap
+process multiple times though, any prompts in the middle of that
+process may significantly slow down the development speed.
+.IP \(bu 2
+\fBThe bootstrapper should only need as much setup as the manifest
+requires.\fP
+.sp
+Having to shuffle specific paths on the host into place
+(e.g. \fB/target\fP has to be created manually) to get the bootstrapper
+running is going to increase the rate of errors made by users.
+Aim for minimal setup.
+.sp
+Exceptions are of course things such as the path to
+the VirtualBox Guest Additions ISO or tools like \fBparted\fP that
+need to be installed on the host.
+.IP \(bu 2
+\fBRoll complexity into which tasks are added to the tasklist.\fP
+.sp
+If a \fBrun()\fP function checks whether it should do any work or simply be
+skipped, consider doing that check in \fBresolve_tasks()\fP instead and
+avoid adding that task alltogether. This allows people looking at the
+tasklist in the logfile to determine what work has been performed. If
+a task says it will modify a file but then bails , a developer may get
+confused when looking at that file after bootstrapping. He could
+conclude that the file has either been overwritten or that the
+search & replace does not work correctly.
+.IP \(bu 2
+\fBControl flow should be directed from the task graph.\fP
+.sp
+Avoid creating complicated \fBrun()\fP functions. If necessary, split up
+a function into two semantically separate tasks.
+.sp
+This allows other tasks to interleave with the control\-flow and add extended
+functionality (e.g. because volume creation and mounting are two
+separate tasks, \fI\%the prebootstrapped plugin\fP
+can replace the volume creation task with a task of its own that
+creates a volume from a snapshot instead, but still reuse the mount task).
+.IP \(bu 2
+\fBTask classes should be treated as decorated run() functions, they
+should not have any state\fP
+.sp
+Thats what the BootstrapInformation object is for.
+.IP \(bu 2
+\fBOnly add stuff to the BootstrapInformation object when really necessary.\fP
+.sp
+This is mainly to avoid clutter.
+.IP \(bu 2
+\fBUse a json\-schema to check for allowed settings\fP
+The json\-schema may be verbose but it keeps the bulk of check work outside the
+python code, which is a big plus when it comes to readability. This of
+course only applies bas long as the checks are simple. You can of
+course fall back to doing the check in python when that solution is
+considerably less complex.
+.IP \(bu 2
+\fBWhen invoking external programs, use long options whenever possible\fP
+.sp
+This makes the commands a lot easier to understand, since
+the option names usually hint at what they do.
+.IP \(bu 2
+\fBWhen invoking external programs, don\(aqt use full paths, rely on \(ga\(ga$PATH\(ga\(ga\fP
+.sp
+This increases robustness when executable locations change.
+Example: Use \fBlog_call([\(aqwget\(aq, ...])\fP instead of \fBlog_call([\(aq/usr/bin/wget\(aq, ...])\fP\&.
+.UNINDENT
+.SS Coding style
+.sp
+bootstrap\-vz is coded to comply closely with the PEP8 style
+guidelines. There however a few exceptions:
+.INDENT 0.0
+.IP \(bu 2
+Max line length is 110 chars, not 80.
+.IP \(bu 2
+Multiple assignments may be aligned with spaces so that the = match
+vertically.
+.IP \(bu 2
+Ignore \fBE101\fP: Indent with tabs and align with spaces
+.IP \(bu 2
+Ignore \fBE221 & E241\fP: Alignment of assignments
+.IP \(bu 2
+Ignore \fBE501\fP: The max line length is not 80 characters
+.IP \(bu 2
+Ignore \fBW191\fP: Indent with tabs not spaces
+.UNINDENT
+.sp
+The codebase can be checked for any violations quite easily, since those rules are already specified in the
+\fI\%tox\fP configuration file.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+tox \-e flake8
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH TASKOVERVIEW
+.SH HOW BOOTSTRAP-VZ WORKS
+.SS Tasks
+.sp
+At its core bootstrap\-vz is based on tasks that perform units of work.
+By keeping those tasks small and with a solid structure built around
+them a high degree of flexibility can be achieved. To ensure that
+tasks are executed in the right order, each task is placed in a
+dependency graph where directed edges dictate precedence. Each task is
+a simple class that defines its predecessor tasks and successor tasks
+via attributes. Here is an example:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+class MapPartitions(Task):
+    description = \(aqMapping volume partitions\(aq
+    phase = phases.volume_preparation
+    predecessors = [PartitionVolume]
+    successors = [filesystem.Format]
+
+    @classmethod
+    def run(cls, info):
+            info.volume.partition_map.map(info.volume)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+In this case the attributes define that the task at hand should run
+after the \fBPartitionVolume\fP task — i.e. after volume has been
+partitioned (\fBpredecessors\fP) — but before formatting each
+partition (\fBsuccessors\fP).
+It is also placed in the \fBvolume_preparation\fP phase.
+Phases are ordered and group tasks together. All tasks in a phase are
+run before proceeding with the tasks in the next phase. They are a way
+of avoiding the need to list 50 different tasks as predecessors and
+successors.
+.sp
+The final task list that will be executed is computed by enumerating
+all tasks in the package, placing them in the graph and
+\fI\%sorting them topoligcally\fP\&.
+Subsequently the list returned is filtered to contain only the tasks the
+provider and the plugins added to the taskset.
+.SS System abstractions
+.sp
+There are several abstractions in bootstrap\-vz that make it possible
+to generalize things like volume creation, partitioning, mounting and
+package installation. As a rule these abstractions are located in the
+\fBbase/\fP folder, where the manifest parsing and task ordering algorithm
+are placed as well.
+.SH COMMANDLINE SWITCHES
+.sp
+As a developer, there are commandline switches available which can
+make your life a lot easier.
+.INDENT 0.0
+.IP \(bu 2
+\fB\-\-debug\fP: Enables debug output in the console. This includes output
+from all commands that are invoked during bootstrapping.
+.IP \(bu 2
+\fB\-\-pause\-on\-error\fP: Pauses the execution when an exception occurs
+before rolling back. This allows you to debug by inspecting the volume
+at the time the error occured.
+.IP \(bu 2
+\fB\-\-dry\-run\fP: Prevents the \fBrun()\fP function from being called on all
+tasks. This is useful if you want to see whether the task order is
+correct.
+.UNINDENT
+.SH LOGFILE
+.sp
+Every run creates a new logfile in the \fBlogs/\fP directory. The filename
+for each run consists of a timestamp (\fB%Y%m%d%H%M%S\fP) and the basename
+of the manifest used. The log also contains debugging statements
+regardless of whether the \fB\-\-debug\fP switch was used.
+.INDENT 0.0
+.IP \(bu 2
+\fIgenindex\fP
+.IP \(bu 2
+\fImodindex\fP
+.IP \(bu 2
+\fIsearch\fP
+.UNINDENT
+.SH AUTHOR
+Anders Ingemann
+.SH COPYRIGHT
+2014, Anders Ingemann
+.\" Generated by docutils manpage writer.
+.
