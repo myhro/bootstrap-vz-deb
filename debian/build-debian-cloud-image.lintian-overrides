@@ -1,4 +1,0 @@
-# Scripts from /usr/share/build-debian-cloud/{grub,init.d,plugins,tasks}/ are
-# execute during spinning up instance therefore doesn't have to be executable at
-# all times
-build-debian-cloud-image binary: script-not-executable
