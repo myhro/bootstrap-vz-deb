@@ -1,5 +1,5 @@
-bootstrap-vz (0~20140510-1) unstable; urgency=low
+bootstrap-vz (0.9.0-1) unstable; urgency=low
 
   * Initial release (Closes: #693198)
 
- -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Mon, 20 Jan 2014 18:36:02 +0000
+ -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Thu, 05 Jun 2014 08:42:12 +0100
