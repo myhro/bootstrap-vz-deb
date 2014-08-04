@@ -1,0 +1,27 @@
+From a2327612b89434501e554e4f56e2b446f76daf33 Mon Sep 17 00:00:00 2001
+From: Balint Reczey <balint@balintreczey.hu>
+Date: Mon, 4 Aug 2014 12:16:23 +0200
+Subject: [PATCH 2/2] Correct volume size calculation to fix broken volume
+ partitioning using loopback
+
+Fixes #127.
+---
+ bootstrapvz/common/fs/loopbackvolume.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bootstrapvz/common/fs/loopbackvolume.py b/bootstrapvz/common/fs/loopbackvolume.py
+index 8f6f7cd..be2eead 100644
+--- a/bootstrapvz/common/fs/loopbackvolume.py
++++ b/bootstrapvz/common/fs/loopbackvolume.py
+@@ -11,7 +11,7 @@ class LoopbackVolume(Volume):
+ 
+ 	def _before_create(self, e):
+ 		self.image_path = e.image_path
+-		vol_size = str(self.size.get_qty_in('MiB')) + 'M'
++		vol_size = str(self.size.get_qty_in('B') + 4096)
+ 		log_check_call(['qemu-img', 'create', '-f', 'raw', self.image_path, vol_size])
+ 
+ 	def _before_attach(self, e):
+-- 
+2.0.1
+
