@@ -15,7 +15,7 @@ Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, python-docopt,
  python-boto, python-jsonschema, python-termcolor, debootstrap, python-fysom
 Recommends: qemu-utils
-Suggests: virtualbox-guest-additions-iso
+Suggests: virtualbox-guest-additions-iso, kpartx
 Description: Software for creating Debian images for use in public or private clouds
  It's a software for creating Debian images to run on public or private clouds
  (Amazon, Google, OpenStack, Eucaliptus, etc).
