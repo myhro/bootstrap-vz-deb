@@ -1,8 +1,7 @@
-From 0cc994d5100f173b6cabcbff796d353fd975e5d2 Mon Sep 17 00:00:00 2001
 From: Olivier Berger <oberger@ouvaton.org>
 Date: Mon, 4 Aug 2014 12:12:47 +0200
-Subject: [PATCH 1/2] Correct volume size calculation to fix broken volume
- partitioning using nbd
+Subject: Correct volume size calculation to fix broken volume partitioning
+ using nbd
 
 Fixes #129.
 ---
@@ -10,7 +9,7 @@ Fixes #129.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/bootstrapvz/common/fs/qemuvolume.py b/bootstrapvz/common/fs/qemuvolume.py
-index 605e77c..3467932 100644
+index 605e77c..45d2e65 100644
 --- a/bootstrapvz/common/fs/qemuvolume.py
 +++ b/bootstrapvz/common/fs/qemuvolume.py
 @@ -8,7 +8,7 @@ class QEMUVolume(LoopbackVolume):
@@ -22,6 +21,3 @@ index 605e77c..3467932 100644
  		log_check_call(['qemu-img', 'create', '-f', self.qemu_format, self.image_path, vol_size])
  
  	def _check_nbd_module(self):
--- 
-2.0.1
-
