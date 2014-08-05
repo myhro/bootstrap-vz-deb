@@ -1,5 +1,15 @@
 bootstrap-vz (0.9.0-1) unstable; urgency=low
 
+  [ Marcin Kulisz (kuLa) ]
   * Initial release (Closes: #693198)
 
- -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Thu, 05 Jun 2014 08:42:12 +0100
+  [ Balint Reczey ]
+  * Suggest kpartx, too
+  * Let Debhelper's auto install call setup.py
+  * Let Debhelper build the package
+  * Install missing assets
+  * Override lintian warnings about not executable scripts
+  * Correct volume size calculation to fix broken volume partitioning
+  * Suggest euca2ools
+
+ -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Tue, 05 Aug 2014 21:47:49 +0100
