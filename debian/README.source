@@ -21,8 +21,11 @@ from <git://anonscm.debian.org/cloud/bootstrap-vz.git>
       upstream/3.0.0.svn1419
   * We prefix our tags with 'debian/' e.g. debian/3.0.2-2
     ** experimental releases are prefixed 'debian/experimental'
-     e.g. debian/experimental/4.0-1
+      e.g. debian/experimental/4.0-1
+    ** Debian tagging should be done after package had been successfully
+      uploaded to Debian repository (to avoid having tags for debs which doesn't
+      exist in the archive)
 
-Information how to use gbp work flow following liks may be usefull:
+Information how to use gbp work flow following liks may be useful:
 https://honk.sigxcpu.org/piki/development/debian_packages_in_git/
 https://wiki.debian.org/PackagingWithGit
