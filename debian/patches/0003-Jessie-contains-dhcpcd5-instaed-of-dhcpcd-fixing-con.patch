@@ -1,0 +1,46 @@
+From: Tomasz Rybak <tomasz.rybak@post.pl>
+Date: Sun, 6 Jul 2014 19:05:00 +0200
+Subject: Jessie contains dhcpcd5 instaed of dhcpcd; fixing configuration.
+
+---
+ bootstrapvz/providers/ec2/tasks/network.py  | 9 +++++----
+ bootstrapvz/providers/ec2/tasks/packages.py | 6 +++++-
+ 2 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/bootstrapvz/providers/ec2/tasks/network.py b/bootstrapvz/providers/ec2/tasks/network.py
+index 8d3f695..65aff26 100644
+--- a/bootstrapvz/providers/ec2/tasks/network.py
++++ b/bootstrapvz/providers/ec2/tasks/network.py
+@@ -11,10 +11,11 @@ class EnableDHCPCDDNS(Task):
+ 	@classmethod
+ 	def run(cls, info):
+ 		# The dhcp client that ships with debian sets the DNS servers per default.
+-		# For dhcpcd we need to configure it to do that.
+-		from bootstrapvz.common.tools import sed_i
+-		dhcpcd = os.path.join(info.root, 'etc/default/dhcpcd')
+-		sed_i(dhcpcd, '^#*SET_DNS=.*', 'SET_DNS=\'yes\'')
++		# For dhcpcd in Wheezy and earlier we need to configure it to do that.
++		if info.release_codename in {'jessie', 'sid'}:
++			from bootstrapvz.common.tools import sed_i
++			dhcpcd = os.path.join(info.root, 'etc/default/dhcpcd')
++			sed_i(dhcpcd, '^#*SET_DNS=.*', 'SET_DNS=\'yes\'')
+ 
+ 
+ class AddBuildEssentialPackage(Task):
+diff --git a/bootstrapvz/providers/ec2/tasks/packages.py b/bootstrapvz/providers/ec2/tasks/packages.py
+index 596d3fb..62b21b5 100644
+--- a/bootstrapvz/providers/ec2/tasks/packages.py
++++ b/bootstrapvz/providers/ec2/tasks/packages.py
+@@ -11,7 +11,11 @@ class DefaultPackages(Task):
+ 	@classmethod
+ 	def run(cls, info):
+ 		info.packages.add('file')  # Needed for the init scripts
+-		info.packages.add('dhcpcd')  # isc-dhcp-client doesn't work properly with ec2
++		# isc-dhcp-client doesn't work properly with ec2
++		if info.release_codename in {'jessie', 'sid'}:
++			info.packages.add('dhcpcd5')
++		else:
++			info.packages.add('dhcpcd')
+ 
+ 		info.exclude_packages.add('isc-dhcp-client')
+ 		info.exclude_packages.add('isc-dhcp-common')

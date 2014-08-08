@@ -1,0 +1,24 @@
+From: Tomasz Rybak <tomasz.rybak@post.pl>
+Date: Tue, 8 Jul 2014 20:59:16 +0200
+Subject: Jessie has different kernel for i386, fixing name for EC2.
+
+---
+ bootstrapvz/providers/ec2/tasks/packages-kernels.json | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/bootstrapvz/providers/ec2/tasks/packages-kernels.json b/bootstrapvz/providers/ec2/tasks/packages-kernels.json
+index adbbf97..9fcf825 100644
+--- a/bootstrapvz/providers/ec2/tasks/packages-kernels.json
++++ b/bootstrapvz/providers/ec2/tasks/packages-kernels.json
+@@ -7,9 +7,9 @@
+ 	{"i386":  "linux-image-686",
+ 	 "amd64": "linux-image-amd64"},
+ "jessie":
+-	{"i386":  "linux-image-686",
++	{"i386":  "linux-image-686-pae",
+ 	 "amd64": "linux-image-amd64"},
+ "sid":
+-	{"i386":  "linux-image-686",
++	{"i386":  "linux-image-686-pae",
+ 	 "amd64": "linux-image-amd64"}
+ }
