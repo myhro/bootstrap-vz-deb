@@ -4,8 +4,9 @@ bootstrap-vz (0.9.0-2) unstable; urgency=low
   * Added description when debian tags should be applied
   * Added patches agains upstream fixing partition sizes, dhcp in sid and
     Jessie and fixing dependency for i386 kernel package name
+  * Added patch fixing virtualbox guest additions paths
 
- -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Fri, 08 Aug 2014 19:02:57 +0100
+ -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Tue, 09 Dec 2014 21:48:46 +0000
 
 bootstrap-vz (0.9.0-1) unstable; urgency=low
 
