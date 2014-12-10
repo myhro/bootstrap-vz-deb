@@ -5,6 +5,7 @@ bootstrap-vz (0.9.0-2) unstable; urgency=low
   * Added patches agains upstream fixing partition sizes, dhcp in sid and
     Jessie and fixing dependency for i386 kernel package name
   * Added patch fixing virtualbox guest additions paths
+  * Bumping up Standards-Version to 3.9.6
 
  -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Tue, 09 Dec 2014 21:48:46 +0000
 
