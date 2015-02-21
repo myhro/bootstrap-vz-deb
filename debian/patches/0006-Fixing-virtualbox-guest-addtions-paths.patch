@@ -7,8 +7,6 @@ Subject: Fixing virtualbox guest addtions paths
  manifests/virtualbox.manifest.json         | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/manifests/virtualbox-vagrant.manifest.json b/manifests/virtualbox-vagrant.manifest.json
-index 6641ac2..5f2e068 100644
 --- a/manifests/virtualbox-vagrant.manifest.json
 +++ b/manifests/virtualbox-vagrant.manifest.json
 @@ -2,7 +2,7 @@
@@ -20,15 +18,15 @@ index 6641ac2..5f2e068 100644
  	},
  	"image": {
  		"name":        "debian-{system.release}-{system.architecture}-{%y}{%m}{%d}",
-diff --git a/manifests/virtualbox.manifest.json b/manifests/virtualbox.manifest.json
-index 062cc9c..9bfec02 100644
 --- a/manifests/virtualbox.manifest.json
 +++ b/manifests/virtualbox.manifest.json
-@@ -2,7 +2,7 @@
+@@ -1,8 +1,8 @@
+ {
  	"provider": "virtualbox",
  	"bootstrapper": {
- 		"workspace":      "/target"
+-		"workspace":      "/target"
 -		// "guest_additions": "/root/images/VBoxGuestAdditions.iso"
++		"workspace":      "/target",
 +		"guest_additions": "/usr/share/virtualbox/VBoxGuestAdditions.iso"
  	},
  	"image": {
