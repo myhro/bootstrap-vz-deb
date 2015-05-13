@@ -3,7 +3,7 @@ Section: admin
 Priority: optional
 Maintainer: Debian Cloud Team <cloud-packages@lists.alioth.debian.org>
 Uploaders: Marcin Kulisz (kuLa) <debian@kulisz.net>
-Build-Depends: debhelper (>= 9), python-all, python, python-setuptools
+Build-Depends: debhelper (>= 9), dh-python, python-all, python-setuptools
 Standards-Version: 3.9.6
 X-Python-Version: >= 2.7
 Homepage: https://github.com/andsens/bootstrap-vz
@@ -12,8 +12,8 @@ Vcs-Browser: http://anonscm.debian.org/gitweb/?p=cloud/bootstrap-vz.git;a=summar
 
 Package: bootstrap-vz
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, python-docopt,
- python-boto, python-jsonschema, python-termcolor, debootstrap, python-fysom
+Depends: ${misc:Depends}, ${python:Depends}, python-docopt, python-boto,
+ python-jsonschema, python-termcolor, debootstrap, python-fysom
 Recommends: qemu-utils
 Suggests: virtualbox-guest-additions-iso, kpartx, euca2ools
 Description: Software for creating Debian images for use in public or private clouds
