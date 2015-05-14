@@ -1,9 +1,11 @@
-bootstrap-vz (0.9.0-3) unstable; urgency=low
+bootstrap-vz (0.9.0-2) unstable; urgency=low
 
+  [ Tiago Ilieve ]
   * Add a `.gitignore` file to the `debian/` directory, so the files generated
-    during build doesn't get commited by accident
+    during build doesn't get committed by accident
   * d/control: Update `Build-Depends`, add `dh-python` and remove the
     redundant `python` entry
+  * d/control: added Tiago Ilieve <tiago.myhro@gmail.com> to the uploaders
   * d/control: Update `Depends`, remove `${shlibs:Depends}` to avoid a warning
     during build
   * d/rules: Override `dh_auto_clean` to remove the `*.egg-info` directory,
