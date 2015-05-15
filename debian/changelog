@@ -1,5 +1,12 @@
 bootstrap-vz (0.9.0-2) unstable; urgency=low
 
+  [ Marcin Kulisz ]
+  * Added description when debian tags should be applied
+  * Added patches against upstream fixing partition sizes, dhcp in sid and
+    Jessie and fixing dependency for i386 kernel package name
+  * Added patch fixing virtualbox guest additions paths
+  * Bumping up Standards-Version to 3.9.6
+
   [ Tiago Ilieve ]
   * Add a `.gitignore` file to the `debian/` directory, so the files generated
     during build doesn't get committed by accident
@@ -12,17 +19,6 @@ bootstrap-vz (0.9.0-2) unstable; urgency=low
     which was preventing `debuild` from running more than one time
 
  -- Tiago Ilieve <tiago.myhro@gmail.com>  Wed, 13 May 2015 20:26:43 -0300
-
-bootstrap-vz (0.9.0-2) unstable; urgency=low
-
-  [ Marcin Kulisz ]
-  * Added description when debian tags should be applied
-  * Added patches against upstream fixing partition sizes, dhcp in sid and
-    Jessie and fixing dependency for i386 kernel package name
-  * Added patch fixing virtualbox guest additions paths
-  * Bumping up Standards-Version to 3.9.6
-
- -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Tue, 09 Dec 2014 21:48:46 +0000
 
 bootstrap-vz (0.9.0-1) unstable; urgency=low
 
