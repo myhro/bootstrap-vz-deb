@@ -21,8 +21,13 @@ class TaskList(object):
 		:param dict info: The bootstrap information object
 		:param bool dry_run: Whether to actually run the tasks or simply step through them
 		"""
+		# Get a hold of every task we can find, so that we can topologically sort
+		# all tasks, rather than just the subset we are going to run.
+		from bootstrapvz.common import tasks as common_tasks
+		modules = [common_tasks, info.manifest.modules['provider']] + info.manifest.modules['plugins']
+		all_tasks = set(get_all_tasks(modules))
 		# Create a list for us to run
-		task_list = create_list(self.tasks)
+		task_list = create_list(self.tasks, all_tasks)
 		# Output the tasklist
 		log.debug('Tasklist:\n\t' + ('\n\t'.join(map(repr, task_list))))
 
@@ -61,28 +66,33 @@ def load_tasks(function, manifest, *args):
 	return tasks
 
 
-def create_list(subset):
+def create_list(taskset, all_tasks):
 	"""Creates a list of all the tasks that should be run.
 	"""
 	from bootstrapvz.common.phases import order
-	# Get a hold of all tasks
-	tasks = get_all_tasks()
-	# Make sure the taskset is a subset of all the tasks we have gathered
-	subset.issubset(tasks)
+	# Make sure all_tasks is a superset of the resolved taskset
+	if not all_tasks >= taskset:
+		msg = ('bootstrap-vz generated a list of all available tasks. '
+		       'That list is not a superset of the tasks required for bootstrapping. '
+		       'The tasks that were not found are: {tasks} '
+		       '(This is an error in the code and not the manifest, please report this issue.)'
+		       .format(tasks=', '.join(map(str, taskset - all_tasks)))
+		       )
+		raise TaskListError(msg)
 	# Create a graph over all tasks by creating a map of each tasks successors
 	graph = {}
-	for task in tasks:
+	for task in all_tasks:
 		# Do a sanity check first
 		check_ordering(task)
 		successors = set()
 		# Add all successors mentioned in the task
 		successors.update(task.successors)
 		# Add all tasks that mention this task as a predecessor
-		successors.update(filter(lambda succ: task in succ.predecessors, tasks))
+		successors.update(filter(lambda succ: task in succ.predecessors, all_tasks))
 		# Create a list of phases that succeed the phase of this task
 		succeeding_phases = order[order.index(task.phase) + 1:]
 		# Add all tasks that occur in above mentioned succeeding phases
-		successors.update(filter(lambda succ: succ.phase in succeeding_phases, tasks))
+		successors.update(filter(lambda succ: succ.phase in succeeding_phases, all_tasks))
 		# Map the successors to the task
 		graph[task] = successors
 
@@ -104,20 +114,25 @@ def create_list(subset):
 
 	# Filter out any tasks not in the tasklist
 	# We want to maintain ordering, so we don't use set intersection
-	sorted_tasks = filter(lambda task: task in subset, sorted_tasks)
+	sorted_tasks = filter(lambda task: task in taskset, sorted_tasks)
 	return sorted_tasks
 
 
-def get_all_tasks():
+def get_all_tasks(modules):
 	"""Gets a list of all task classes in the package
 
 	:return: A list of all tasks in the package
 	:rtype: list
 	"""
-	# Get a generator that returns all classes in the package
 	import os.path
-	pkg_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
-	classes = get_all_classes(pkg_path, 'bootstrapvz.')
+	# Get generators that return all classes in a module
+	generators = []
+	for module in modules:
+		module_path = os.path.dirname(module.__file__)
+		module_prefix = module.__name__ + '.'
+		generators.append(get_all_classes(module_path, module_prefix))
+	import itertools
+	classes = itertools.chain(*generators)
 
 	# lambda function to check whether a class is a task (excluding the superclass Task)
 	def is_task(obj):
@@ -126,11 +141,12 @@ def get_all_tasks():
 	return filter(is_task, classes)  # Only return classes that are tasks
 
 
-def get_all_classes(path=None, prefix=''):
+def get_all_classes(path=None, prefix='', excludes=[]):
 	""" Given a path to a package, this function retrieves all the classes in it
 
 	:param str path: Path to the package
 	:param str prefix: Name of the package followed by a dot
+	:param list excludes: List of str matching module names that should be ignored
 	:return: A generator that yields classes
 	:rtype: generator
 	:raises Exception: If a module cannot be inspected.
@@ -139,10 +155,13 @@ def get_all_classes(path=None, prefix=''):
 	import importlib
 	import inspect
 
-	def walk_error(module):
-		raise Exception('Unable to inspect module ' + module)
+	def walk_error(module_name):
+		if not any(map(lambda excl: module_name.startswith(excl), excludes)):
+			raise TaskListError('Unable to inspect module ' + module_name)
 	walker = pkgutil.walk_packages([path], prefix, walk_error)
 	for _, module_name, _ in walker:
+		if any(map(lambda excl: module_name.startswith(excl), excludes)):
+			continue
 		module = importlib.import_module(module_name)
 		classes = inspect.getmembers(module, inspect.isclass)
 		for class_name, obj in classes:
@@ -162,21 +181,31 @@ def check_ordering(task):
 	:raises TaskListError: If there is a conflict between task precedence and phase precedence
 	"""
 	for successor in task.successors:
-		# Run through all successors and check whether the phase of the task
-		# comes before the phase of a successor
+		# Run through all successors and throw an error if the phase of the task
+		# lies before the phase of a successor, log a warning if it lies after.
 		if task.phase > successor.phase:
 			msg = ("The task {task} is specified as running before {other}, "
 			       "but its phase '{phase}' lies after the phase '{other_phase}'"
 			       .format(task=task, other=successor, phase=task.phase, other_phase=successor.phase))
 			raise TaskListError(msg)
+		if task.phase < successor.phase:
+			log.warn("The task {task} is specified as running before {other} "
+			         "although its phase '{phase}' already lies before the phase '{other_phase}' "
+			         "(or the task has been placed in the wrong phase)"
+			         .format(task=task, other=successor, phase=task.phase, other_phase=successor.phase))
 	for predecessor in task.predecessors:
-		# Run through all predecessors and check whether the phase of the task
-		# comes after the phase of a predecessor
+		# Run through all successors and throw an error if the phase of the task
+		# lies after the phase of a predecessor, log a warning if it lies before.
 		if task.phase < predecessor.phase:
 			msg = ("The task {task} is specified as running after {other}, "
 			       "but its phase '{phase}' lies before the phase '{other_phase}'"
 			       .format(task=task, other=predecessor, phase=task.phase, other_phase=predecessor.phase))
 			raise TaskListError(msg)
+		if task.phase > predecessor.phase:
+			log.warn("The task {task} is specified as running after {other} "
+			         "although its phase '{phase}' already lies after the phase '{other_phase}' "
+			         "(or the task has been placed in the wrong phase)"
+			         .format(task=task, other=predecessor, phase=task.phase, other_phase=predecessor.phase))
 
 
 def strongly_connected_components(graph):
