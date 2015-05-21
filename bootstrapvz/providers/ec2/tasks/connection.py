@@ -3,9 +3,21 @@ from bootstrapvz.common import phases
 import host
 
 
+class SilenceBotoDebug(Task):
+	description = 'Silence boto debug logging'
+	phase = phases.preparation
+
+	@classmethod
+	def run(cls, info):
+		# Regardless of of loglevel, we don't want boto debug stuff, it's very noisy
+		import logging
+		logging.getLogger('boto').setLevel(logging.INFO)
+
+
 class GetCredentials(Task):
 	description = 'Getting AWS credentials'
 	phase = phases.preparation
+	successors = [SilenceBotoDebug]
 
 	@classmethod
 	def run(cls, info):
@@ -18,16 +30,26 @@ class GetCredentials(Task):
 	def get_credentials(cls, manifest, keys):
 		from os import getenv
 		creds = {}
-		if all(key in manifest.data['credentials'] for key in keys):
-			for key in keys:
-				creds[key] = manifest.data['credentials'][key]
-			return creds
+		if 'credentials' in manifest.provider:
+			if all(key in manifest.provider['credentials'] for key in keys):
+				for key in keys:
+					creds[key] = manifest.provider['credentials'][key]
+				return creds
 
 		def env_key(key):
 			return ('aws-' + key).upper().replace('-', '_')
 		if all(getenv(env_key(key)) is not None for key in keys):
 			for key in keys:
 				creds[key] = getenv(env_key(key))
+			return creds
+
+		def provider_key(key):
+			return key.replace('-', '_')
+		import boto.provider
+		provider = boto.provider.Provider('aws')
+		if all(getattr(provider, provider_key(key)) is not None for key in keys):
+			for key in keys:
+				creds[key] = getattr(provider, provider_key(key))
 			return creds
 		raise RuntimeError(('No ec2 credentials found, they must all be specified '
 		                    'exclusively via environment variables or through the manifest.'))
