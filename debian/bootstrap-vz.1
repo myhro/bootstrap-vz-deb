@@ -47,12 +47,12 @@ show this help
 
 .PP
 .SH [MANIFEST]
-Manifest is a json file providing final image specification, standard json rules
+Manifest is a yaml file providing final image specification, standard yaml rules
 apply to it and the following fields should or may be used (depending on final
 image type).
 .br
 Below are describe specific fields and fields within sections, all should be in
-strict json format put into manifest file.
+strict yaml format put into manifest file.
 
 .B provider \-
 [kvm|ec2|gce|virtualbox|azure] targeted platform where final image produced by
@@ -60,7 +60,7 @@ bootstrap\-vz is going to be used
 .\" man page reviewed until this point
 .br
 .B virtualization \-
-[pvm|virtio|ide] ]type of vitalization which is going to be used to run final
+[pvm|hvm|virtio|ide] type of vitalization which is going to be used to run final
 image
 .br
 
@@ -168,50 +168,44 @@ AWS Secret Key
 
 .PP
 .SH MANIFEST - example
-{
-  "provider":       "ec2",
-  "virtualization": "pvm",
-  "credentials":    {
-    "access-key" : null,
-    "secret-key" : null,
-    "certificate": null,
-    "private-key": null,
-    "user-id"    : null
-  },
-
-  "bootstrapper": {
-    "mount_dir": "/target",
-    "mirror"   : "http://http.debian.net/debian"
-  },
-  "image": {
-    "name"       : "debian-{release}-{architecture}-{virtualization}-{%Y}{%m}{%d}",
-    "description": "Debian {release} {architecture} AMI ({virtualization})"
-    "bucket"     : ""
-  },
-  "system": {
-    "release"     : "wheezy",
-    "architecture": "amd64",
-    "timezone"    : "UTC",
-    "locale"      : "en_US",
-    "charmap"     : "UTF-8"
-  },
-  "volume": {
-    "backing"   : "s3",
-    "filesystem": "ext4",
-    "size"      : 1024
-  },
-  "plugins": {
-    "admin_user": {
-      "enabled" : true,
-      "username": "admin"
-    },
-    "prebootstrapped": {
-      "enabled": false,
-      "image"  : null
-    }
-  }
+.nf
+---
 .br
-}
+provider:
+  name: ec2
+  virtualization: hvm
+  enhanced_networking: simple
+  credentials:
+    access-key: AFAKEACCESSKEYFORAWS
+    secret-key: thes3cr3tkeyf0ryourawsaccount/FS4d8Qdva
+bootstrapper:
+  workspace: /target
+image:
+  name:
+debian-{system.release}-{system.architecture}-{provider.virtualization}-{%Y}-{%m}-{%d}-ebs
+  description: Debian {system.release} {system.architecture}
+system:
+  release: wheezy
+  architecture: amd64
+  bootloader: extlinux
+  charmap: UTF-8
+  locale: en_US
+  timezone: UTC
+volume:
+  backing: ebs
+  partitions:
+    type: none
+    root:
+      filesystem: ext4
+      size: 8GiB
+packages:
+  mirror: http://httpredir.debian.org/debian
+plugins:
+  cloud_init:
+    metadata_sources: Ec2
+    username: admin
+.fi
+.br
 
 .PP
 Example manifests can be found in
