@@ -1,6 +1,0 @@
-0001-Correct-volume-size-calculation-to-fix-broken-volume.patch
-0002-Correct-volume-size-calculation-to-fix-broken-volume.patch
-0003-Jessie-contains-dhcpcd5-instaed-of-dhcpcd-fixing-con.patch
-0004-Fix-wrong-condition-in-dhcpcd-configuration-in-Jessi.patch
-0005-Jessie-has-different-kernel-for-i386-fixing-name-for.patch
-0006-Fixing-virtualbox-guest-addtions-paths.patch
