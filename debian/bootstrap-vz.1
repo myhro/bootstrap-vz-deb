@@ -54,14 +54,18 @@ image type).
 Below are describe specific fields and fields within sections, all should be in
 strict yaml format put into manifest file.
 
-.B provider \-
+.IR provider \-
 [kvm|ec2|gce|virtualbox|azure] targeted platform where final image produced by
 bootstrap\-vz is going to be used
 .\" man page reviewed until this point
 .br
+.RS
 .B virtualization \-
 [pvm|hvm|virtio|ide] type of vitalization which is going to be used to run final
 image
+.br
+.B enhanced\_networking \-
+.RE
 .br
 
 .IR bootstrapper
@@ -72,6 +76,8 @@ where all bootstraped files are going to be installed
 .B mirror \-
 Debian mirror to use to fetch all required files (suggestion:
 http://http.debian.net/debian)
+.br
+.B workspace \-
 .RE
 
 .IR image
