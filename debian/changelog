@@ -5,6 +5,7 @@ bootstrap-vz (0.9.5-1) UNRELEASED; urgency=medium
     works with GPT on HVM instances and many more; more details in upstream
     changelog (/usr/share/doc/bootstrap-vz/changelog.gz)
   * Removing all patches which has been applied/fixed upstream
+  * Creating additionnal and updating man pages for the new upstream
 
  -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Wed, 08 Jul 2015 19:11:59 +0100
 
