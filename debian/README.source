@@ -12,9 +12,12 @@ from <git://anonscm.debian.org/cloud/bootstrap-vz.git>
   * 'upstream' branch is where we're keeping untarred source code for
     bootstrap-vz coming in from upstream tarball which was imported with
     'gbp-import-orig'
-    ** It's a clean branch which is merged into master
-  * The 'master' branch is a branch where we're keeping Debian package specific
-    files and merging in (with --no-ff) 'upstream' branch to build packages.
+    ** It's a clean branch which is merged into what used to be a master and now
+      is vendor/suite in our case it's usually debian/sid to conform with DEP14
+      (https://dep.alioth.debian.org/deps/dep14/)
+  * The 'debian/sid' branch is a branch where we're keeping Debian package specific
+    files for major debian work (unless it's backport or experimental upload)
+    and merging in (with --no-ff) 'upstream' branch to build packages.
     ** All Debian specific patches are stored in this branch
   * We carry upstream's tags in 'upstream' branch prefixed with 'upstream/', if
     there is no tag on revision we're using tag accordingly to following e.g:
