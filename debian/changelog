@@ -4,6 +4,7 @@ bootstrap-vz (0.9.5-1) UNRELEASED; urgency=medium
     for manifests, added support for enhanced network instances, extlinux now
     works with GPT on HVM instances and many more; more details in upstream
     changelog (/usr/share/doc/bootstrap-vz/changelog.gz)
+    (Closes: #788924, #788924)
   * Removing all patches which has been applied/fixed upstream
   * Creating additionnal and updating man pages for the new upstream
   * Adopting DEP14 into packaging process (more in the README.source)
