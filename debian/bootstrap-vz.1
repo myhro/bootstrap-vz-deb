@@ -1,13 +1,15 @@
 .\" (C) Copyright 2012 Marcin Kulisz (kuLa) <debian@kulisz.net>,
 .TH BOOTSTRAP\-VZ 1 "June 2, 2014"
 .SH NAME
-bootstrap\-vz \- create Debian images for various cloud providers
+bootstrap\-vz \- program is creating Debian images to be run in cloud
+environments like Amazons EC2, OpenStack, Google Cloud Compute and other which
+are sharing API with those
 .SH SYNOPSIS
 .B bootstrap\-vz
 .RI [options]\ MANIFEST
 .SH DESCRIPTION
-bootstrap\-vz \- create Debian images for various cloud providers
-environments like Amazons EC2, Google Cloud Compute, OpenStack, and other cloud providers using the same APIs. It has a modular design and support a large number of plugins. Whole configuration for the final image is provided by json
+bootstrap\-vz is written in python which can be fairly easily customised if
+needed. Whole configuration for the final image is provided by json
 manifest [MANIFEST]. Manifest available options are explained below in MANIFEST
 section, if there is information which is lacking please file a bug against
 bootstrap\-vz package (patches always welcome).
