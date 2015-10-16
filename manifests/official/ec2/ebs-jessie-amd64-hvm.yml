@@ -1,19 +1,20 @@
 ---
 provider:
   name: ec2
-  virtualization: pvm
+  virtualization: hvm
+  enhanced_networking: simple
   # credentials:
   #   access-key: AFAKEACCESSKEYFORAWS
   #   secret-key: thes3cr3tkeyf0ryourawsaccount/FS4d8Qdva
 bootstrapper:
   workspace: /target
 image:
-  name: debian-{system.release}-{system.architecture}-{provider.virtualization}-{%y}{%m}{%d}
-  description: Debian {system.release} {system.architecture} AMI ({provider.virtualization})
+  name: debian-{system.release}-{system.architecture}-{provider.virtualization}-{%Y}-{%m}-{%d}-ebs
+  description: Debian {system.release} {system.architecture}
 system:
-  release: wheezy
+  release: jessie
   architecture: amd64
-  bootloader: pvgrub
+  bootloader: extlinux
   charmap: UTF-8
   locale: en_US
   timezone: UTC
@@ -23,6 +24,10 @@ volume:
     type: none
     root:
       filesystem: ext4
-      size: 1GiB
+      size: 8GiB
 packages:
   mirror: http://cloudfront.debian.net/debian
+plugins:
+  cloud_init:
+    metadata_sources: Ec2
+    username: admin

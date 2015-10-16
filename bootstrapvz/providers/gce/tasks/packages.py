@@ -1,6 +1,8 @@
 from bootstrapvz.base import Task
 from bootstrapvz.common import phases
 from bootstrapvz.common.tasks import apt
+from bootstrapvz.common.tasks import packages
+from bootstrapvz.common.tools import config_get
 import logging
 import os
 
@@ -8,6 +10,7 @@ import os
 class DefaultPackages(Task):
 	description = 'Adding image packages required for GCE'
 	phase = phases.preparation
+	successors = [packages.AddManifestPackages]
 
 	@classmethod
 	def run(cls, info):
@@ -22,7 +25,6 @@ class DefaultPackages(Task):
 		info.packages.add('ca-certificates')
 
 		kernel_packages_path = os.path.join(os.path.dirname(__file__), 'packages-kernels.yml')
-		from bootstrapvz.common.tools import config_get
 		kernel_package = config_get(kernel_packages_path, [info.manifest.release.codename,
 		                                                   info.manifest.system['architecture']])
 		info.packages.add(kernel_package)
@@ -32,11 +34,14 @@ class ReleasePackages(Task):
 	description = 'Adding release-specific packages required for GCE'
 	phase = phases.preparation
 	predecessors = [apt.AddBackports, DefaultPackages]
+	successors = [packages.AddManifestPackages]
 
 	@classmethod
 	def run(cls, info):
 		# Add release-specific packages, if available.
-		if info.source_lists.target_exists('wheezy-backports'):
+		if (info.source_lists.target_exists('wheezy-backports') or
+		        info.source_lists.target_exists('jessie') or
+		        info.source_lists.target_exists('jessie-backports')):
 			info.packages.add('cloud-initramfs-growroot')
 		else:
 			msg = ('No release-specific packages found for {system.release}').format(**info.manifest_vars)
@@ -47,6 +52,7 @@ class GooglePackages(Task):
 	description = 'Adding image packages required for GCE from Google repositories'
 	phase = phases.preparation
 	predecessors = [DefaultPackages]
+	successors = [packages.AddManifestPackages]
 
 	@classmethod
 	def run(cls, info):
