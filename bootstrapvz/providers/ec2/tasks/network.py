@@ -4,19 +4,27 @@ from bootstrapvz.common.tasks import kernel
 import os.path
 
 
+class InstallDHCPCD(Task):
+	description = 'Replacing isc-dhcp with dhcpcd'
+	phase = phases.preparation
+
+	@classmethod
+	def run(cls, info):
+		# isc-dhcp-client before jessie doesn't work properly with ec2
+		info.packages.add('dhcpcd')
+		info.exclude_packages.add('isc-dhcp-client')
+		info.exclude_packages.add('isc-dhcp-common')
+
+
 class EnableDHCPCDDNS(Task):
 	description = 'Configuring the DHCP client to set the nameservers'
 	phase = phases.system_modification
 
 	@classmethod
 	def run(cls, info):
-		# The dhcp client that ships with debian sets the DNS servers per default.
-		# For dhcpcd in Wheezy and earlier we need to configure it to do that.
-		from bootstrapvz.common.releases import wheezy
-		if info.manifest.release <= wheezy:
-			from bootstrapvz.common.tools import sed_i
-			dhcpcd = os.path.join(info.root, 'etc/default/dhcpcd')
-			sed_i(dhcpcd, '^#*SET_DNS=.*', 'SET_DNS=\'yes\'')
+		from bootstrapvz.common.tools import sed_i
+		dhcpcd = os.path.join(info.root, 'etc/default/dhcpcd')
+		sed_i(dhcpcd, '^#*SET_DNS=.*', 'SET_DNS=\'yes\'')
 
 
 class AddBuildEssentialPackage(Task):
@@ -28,6 +36,50 @@ class AddBuildEssentialPackage(Task):
 		info.packages.add('build-essential')
 
 
+class InstallNetworkingUDevHotplugAndDHCPSubinterface(Task):
+	description = 'Setting up udev and DHCPD rules for EC2 networking'
+	phase = phases.system_modification
+
+	@classmethod
+	def run(cls, info):
+		from . import assets
+		script_src = os.path.join(assets, 'ec2')
+		script_dst = os.path.join(info.root, 'etc')
+
+		import stat
+		rwxr_xr_x = (stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |
+		             stat.S_IRGRP                | stat.S_IXGRP |
+		             stat.S_IROTH                | stat.S_IXOTH)
+
+		from shutil import copy
+		copy(os.path.join(script_src, '53-ec2-network-interfaces.rules'),
+		     os.path.join(script_dst, 'udev/rules.d/53-ec2-network-interfaces.rules'))
+                os.chmod(os.path.join(script_dst, 'udev/rules.d/53-ec2-network-interfaces.rules'), rwxr_xr_x)
+
+		os.mkdir(os.path.join(script_dst, 'sysconfig'), 0755)
+		os.mkdir(os.path.join(script_dst, 'sysconfig/network-scripts'), 0755)
+		copy(os.path.join(script_src, 'ec2net.hotplug'),
+		     os.path.join(script_dst, 'sysconfig/network-scripts/ec2net.hotplug'))
+		os.chmod(os.path.join(script_dst, 'sysconfig/network-scripts/ec2net.hotplug'), rwxr_xr_x)
+
+		copy(os.path.join(script_src, 'ec2net-functions'),
+		     os.path.join(script_dst, 'sysconfig/network-scripts/ec2net-functions'))
+		os.chmod(os.path.join(script_dst, 'sysconfig/network-scripts/ec2net-functions'), rwxr_xr_x)
+
+		copy(os.path.join(script_src, 'ec2dhcp.sh'),
+		     os.path.join(script_dst, 'dhcp/dhclient-exit-hooks.d/ec2dhcp.sh'))
+		os.chmod(os.path.join(script_dst, 'dhcp/dhclient-exit-hooks.d/ec2dhcp.sh'), rwxr_xr_x)
+
+		with open(os.path.join(script_dst, 'network/interfaces'), "a") as interfaces:
+			interfaces.write("iface eth1 inet dhcp\n")
+			interfaces.write("iface eth2 inet dhcp\n")
+			interfaces.write("iface eth3 inet dhcp\n")
+			interfaces.write("iface eth4 inet dhcp\n")
+			interfaces.write("iface eth5 inet dhcp\n")
+			interfaces.write("iface eth6 inet dhcp\n")
+			interfaces.write("iface eth7 inet dhcp\n")
+
+
 class InstallEnhancedNetworking(Task):
 	description = 'Installing enhanced networking kernel driver using DKMS'
 	phase = phases.system_modification
@@ -35,7 +87,7 @@ class InstallEnhancedNetworking(Task):
 
 	@classmethod
 	def run(cls, info):
-		version = '2.15.3'
+		version = '2.16.1'
 		drivers_url = 'http://downloads.sourceforge.net/project/e1000/ixgbevf stable/%s/ixgbevf-%s.tar.gz' % (version, version)
 		archive = os.path.join(info.root, 'tmp', 'ixgbevf-%s.tar.gz' % (version))
 		module_path = os.path.join(info.root, 'usr', 'src', 'ixgbevf-%s' % (version))
@@ -64,4 +116,4 @@ AUTOINSTALL="yes"
 		for task in ['add', 'build', 'install']:
 			# Invoke DKMS task using specified kernel module (-m) and version (-v)
 			log_check_call(['chroot', info.root,
-			                'dkms', task, '-m', 'ixgbevf', '-v', version])
+			                'dkms', task, '-m', 'ixgbevf', '-v', version, '-k', info.kernel_version])

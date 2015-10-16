@@ -1,5 +1,3 @@
-Manifest
-========
 The manifest file is the primary way to interact with bootstrap-vz.
 Every configuration and customization of a Debian installation is specified in this file.
 
@@ -141,8 +139,13 @@ The packages section allows you to install custom packages from a
 variety of sources.
 
 -  ``install``: A list of strings that specify which packages should
-   be installed. Valid values: package names optionally followed by a
+   be installed. Valid values: Package names optionally followed by a
    ``/target`` or paths to local ``.deb`` files.
+   Note that packages are installed in the order they are listed.
+   The installer invocations are bundled by package type (remote or local),
+   meaning if you install two local packages, then two remote packages
+   and then another local package, there will be two calls to ``dpkg -i ...``
+   and a single call to ``apt-get install ...``.
 -  ``install_standard``: Defines if the packages of the
    ``"Standard System Utilities"`` option of the Debian installer,
    provided by `tasksel <https://wiki.debian.org/tasksel>`__, should be
@@ -156,7 +159,7 @@ variety of sources.
    Default: ``false``
 -  ``mirror``: The default aptitude mirror.
    ``optional``
-   Default: ``http://http.debian.net/debian``
+   Default: ``http://httpredir.debian.org/debian/``
 -  ``sources``: A map of additional sources that should be added to
    the aptitude sources list. The key becomes the filename in
    ``/etc/apt/sources.list.d/`` (with ``.list`` appended to it), while

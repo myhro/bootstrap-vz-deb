@@ -1,16 +1,13 @@
 ---
 provider:
-  name: azure
-  waagent:
-    version: 2.0.4
+  name: gce
 bootstrapper:
-  mirror: http://ftp.fr.debian.org/debian/
   workspace: /target
 image:
-  name: debian-{system.release}-{system.architecture}-{%y}{%m}{%d}
+  name: disk
   description: Debian {system.release} {system.architecture}
 system:
-  release: wheezy
+  release: jessie
   architecture: amd64
   bootloader: grub
   charmap: UTF-8
@@ -20,14 +17,17 @@ volume:
   backing: raw
   partitions:
     type: msdos
-    boot:
-      filesystem: ext2
-      size: 32MiB
     root:
       filesystem: ext4
-      size: 7GiB
-packages: {}
+      size: 10GiB
+packages:
+  mirror: http://gce_debian_mirror.storage.googleapis.com/
+  components:
+  - main
+  - contrib
+  - non-free
 plugins:
+  google_cloud_sdk: {}
   ntp:
     servers:
-    - time.windows.com
+    - metadata.google.internal
