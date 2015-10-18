@@ -1,4 +1,4 @@
-bootstrap-vz (0.9.5-1) unstable; urgency=medium
+bootstrap-vz (0.9.9-1) unstable; urgency=medium
 
   This version supports only creation of AWS AMIs for Jessie and earlier
   releases; Stretch creation is not supported yet.

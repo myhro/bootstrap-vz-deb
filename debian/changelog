@@ -1,6 +1,6 @@
-bootstrap-vz (0.9.5-1) UNRELEASED; urgency=medium
+bootstrap-vz (0.9.9-1) unstable; urgency=medium
 
-  * New upstream (0.9.5) with lots of changes like using yaml instead of json
+  * New upstream (0.9.9) with lots of changes like using yaml instead of json
     for manifests, added support for enhanced network instances, extlinux now
     works with GPT on HVM instances and many more; more details in upstream
     changelog (/usr/share/doc/bootstrap-vz/changelog.gz)
@@ -9,7 +9,7 @@ bootstrap-vz (0.9.5-1) UNRELEASED; urgency=medium
   * Creating additionnal and updating man pages for the new upstream
   * Adopting DEP14 into packaging process (more in the README.source)
 
- -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Wed, 08 Jul 2015 19:11:59 +0100
+ -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Sun, 18 Oct 2015 17:39:06 +0100
 
 bootstrap-vz (0.9.0-2) unstable; urgency=low
 
