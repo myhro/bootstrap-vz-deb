@@ -42,7 +42,8 @@ situations.
 .SH MANIFEST VARIABLES
 .sp
 Many of the settings in the example manifests use strings like
-\fBdebian\-{system.release}\-{system.architecture}\-{{"{%y"}}}{{"{%m"}}}{{"{%d"}}}\fP\&.
+\fBdebian\-{system.release}\-{system.architecture}\-
+{{"{\%y"}}}{{"{\%m"}}}{{"{\%d"}}}\fP\&.
 These strings make use of manifest variables, which can cross reference
 other settings in the manifest or specific values supplied by the
 bootstrapper (e.g. all python date formatting variables are available).
@@ -553,7 +554,6 @@ It points at the root of the image volume.
 .SS Example
 .sp
 Create an empty \fIindex.html\fP in \fI/var/www\fP and delete all locales except english.
-.. code:: yaml
 .INDENT 0.0
 .INDENT 3.5
 .INDENT 0.0
