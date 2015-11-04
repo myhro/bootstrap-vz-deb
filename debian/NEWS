@@ -2,7 +2,7 @@ bootstrap-vz (0.9.9-1) unstable; urgency=medium
 
   This version supports only creation of AWS AMIs for Jessie and earlier
   releases; Stretch creation is not supported yet.
-  To create network enhanced Jessie AMI for AWS it have to be done on
+  To create network enhanced Jessie AMI for AWS it may be required to do so on
   precreated Jessie instance.
 
- -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Wed, 14 Oct 2015 19:56:41 +0100
+ -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Wed, 04 Nov 2015 18:17:22 +0000
