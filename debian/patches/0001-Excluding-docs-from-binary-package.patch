@@ -1,0 +1,21 @@
+From: Marcin Kulisz <debian@kulisz.net>
+Date: Tue, 10 Nov 2015 18:20:00 +0000
+Subject: Excluding docs from binary package
+
+---
+ setup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/setup.py b/setup.py
+index fd9f995..a0e4854 100644
+--- a/setup.py
++++ b/setup.py
+@@ -13,7 +13,7 @@ def find_version(path):
+ 
+ setup(name='bootstrap-vz',
+       version=find_version(os.path.join(os.path.dirname(__file__), 'bootstrapvz/__init__.py')),
+-      packages=find_packages(),
++      packages=find_packages(exclude=['docs']),
+       include_package_data=True,
+       entry_points={'console_scripts': ['bootstrap-vz = bootstrapvz.base:main',
+                                         'bootstrap-vz-remote = bootstrapvz.remote.main:main',
