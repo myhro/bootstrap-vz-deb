@@ -1,3 +1,10 @@
+bootstrap-vz (0.9.9-2) unstable; urgency=medium
+
+  * Removing not used files from binary package Closes: #804642
+  * Fixing vbox additions iso path
+
+ -- Marcin Kulisz (kuLa) <debian@kulisz.net>  Wed, 11 Nov 2015 21:08:38 +0000
+
 bootstrap-vz (0.9.9-1) unstable; urgency=medium
 
   * New upstream (0.9.9) with lots of changes like using yaml instead of json
