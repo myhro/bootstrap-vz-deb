@@ -1,0 +1,35 @@
+From: Marcin Kulisz <debian@kulisz.net>
+Date: Wed, 11 Nov 2015 20:21:53 +0000
+Subject: Vbox guest additions iso path fix
+
+---
+ manifests/examples/virtualbox/wheezy-vagrant.yml | 2 +-
+ manifests/examples/virtualbox/wheezy.yml         | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/manifests/examples/virtualbox/wheezy-vagrant.yml b/manifests/examples/virtualbox/wheezy-vagrant.yml
+index e440ca7..8b14179 100644
+--- a/manifests/examples/virtualbox/wheezy-vagrant.yml
++++ b/manifests/examples/virtualbox/wheezy-vagrant.yml
+@@ -1,7 +1,7 @@
+ ---
+ provider:
+   name: virtualbox
+-  guest_additions: /root/images/VBoxGuestAdditions.iso
++  guest_additions: /usr/share/virtualbox/VBoxGuestAdditions.iso
+ bootstrapper:
+   workspace: /target
+ image:
+diff --git a/manifests/examples/virtualbox/wheezy.yml b/manifests/examples/virtualbox/wheezy.yml
+index 6a1b358..15f168f 100644
+--- a/manifests/examples/virtualbox/wheezy.yml
++++ b/manifests/examples/virtualbox/wheezy.yml
+@@ -1,7 +1,7 @@
+ ---
+ provider:
+   name: virtualbox
+-  guest_additions: /root/images/VBoxGuestAdditions.iso
++  guest_additions: /usr/share/virtualbox/VBoxGuestAdditions.iso
+ bootstrapper:
+   workspace: /target
+ image:
