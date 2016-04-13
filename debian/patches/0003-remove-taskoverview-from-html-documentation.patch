@@ -1,0 +1,20 @@
+Description: Remove "Taskoverview" from HTML documentation
+ The "developers/taskoverview.html" page from the documentation page fetches
+ external JavaScript files that are used to plot a graph of the tasks. As this
+ is not a crucial part of the documentation, it is being removed.
+ .
+ This solves a "privacy-breach-generic" lintian complaint.
+Forwarded: not-needed
+Author: Tiago Ilieve <tiago.myhro@gmail.com>
+
+--- a/docs/conf.py
++++ b/docs/conf.py
+@@ -72,7 +72,7 @@
+ 
+ # List of patterns, relative to source directory, that match files and
+ # directories to ignore when looking for source files.
+-exclude_patterns = []
++exclude_patterns = ['developers/taskoverview.rst']
+ 
+ # The reST default role (used for this markup: `text`) to use for all
+ # documents.

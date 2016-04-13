@@ -7,7 +7,8 @@ Uploaders: Marcin Kulisz (kuLa) <debian@kulisz.net>,
 Build-Depends: debhelper (>= 9),
                dh-python,
                python-all,
-               python-setuptools
+               python-setuptools,
+               python-sphinx
 Standards-Version: 3.9.7
 X-Python-Version: >= 2.7
 Homepage: https://github.com/andsens/bootstrap-vz
@@ -26,13 +27,27 @@ Depends: debootstrap,
          ${misc:Depends},
          ${python:Depends}
 Recommends: qemu-utils
-Suggests: euca2ools,
+Suggests: bootstrap-vz-doc,
+          euca2ools,
           kpartx,
           parted,
           virtualbox-guest-additions-iso,
           zerofree
-Description: Software for creating Debian images for use in public or private clouds
+Description: Tool for creating Debian images for cloud platforms
  It's a software for creating Debian images to run on public or private clouds
  (Amazon, Google, OpenStack, Eucaliptus, etc).
  It's using bootstraping as a method for creating images. Images created by this
  tool are fully operational Debian Images for Cloud.
+
+Package: bootstrap-vz-doc
+Section: doc
+Architecture: all
+Depends: ${misc:Depends},
+         ${sphinxdoc:Depends}
+Description: Tool for creating Debian images for cloud platforms (Docs)
+ It's a software for creating Debian images to run on public or private clouds
+ (Amazon, Google, OpenStack, Eucaliptus, etc).
+ It's using bootstraping as a method for creating images. Images created by this
+ tool are fully operational Debian Images for Cloud.
+ .
+ This package contains the HTML documentation.

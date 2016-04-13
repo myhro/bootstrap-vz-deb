@@ -1,0 +1,9 @@
+Document: bootstrap-vz-doc
+Title: bootstrap-vz HTML documentation
+Author: Anders Ingemann
+Abstract: HTML documentation for bootstrap-vz built with Sphinx
+Section: System/Administration
+
+Format: HTML
+Index: /usr/share/doc/bootstrap-vz-doc/html/index.html
+Files: /usr/share/doc/bootstrap-vz-doc/html/*.html
