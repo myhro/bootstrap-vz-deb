@@ -1,3 +1,36 @@
+bootstrap-vz (0.9.9-3) UNRELEASED; urgency=medium
+
+  * Add 'bootstrap-vz-doc' package with Sphinx docs:
+    - Add '0003-remove-taskoverview-from-html-documentation.patch' to prevent
+    the resulting HTML pages from fetching external JS files, fixing litian's
+    'privacy-breach-generic' complaint.
+    - Register its documents with 'doc-base'.
+    - Remove 'bootstrap-vz.3' man page generated generated from the same
+    documentation source.
+  * debian/control:
+    - Add 'bootstrap-vz-doc' as 'bootstrap-vz' suggested package.
+    - Add 'parted' as suggested package, as sometimes 'kpartx' isn't enough and
+    an error is raised asking for installing 'parted' as well.
+    - Add 'python-sphinx' to Build-Depends.
+    - Bump Standards-Version to 3.9.7 (no changes).
+    - Shorten short-description to fit in less than 60 chars, needed to append
+    '(Docs)' to the description of 'bootstrap-vz-doc'.
+  * debian/copyright:
+    - Add copyright for Amazon and myself.
+    - Bump years for Anders Ingemann and Marcin Kulisz.
+    - Move license texts to the bottom of the file.
+  * debian/rules:
+    - Add 'override_dh_auto_build' to generate the HTML documentation during
+    build time with Sphinx.
+    - Add 'override_dh_installchangelogs', as it was grabbing the wrong upstream
+    changelog file. (Closes: #820607)
+    - Extend 'override_dh_auto_clean' to remove unneeded files after
+    generating the documentation.
+  * Update Vcs URLs to the same on the Alioth web page.
+  * wrap-and-sort the 'debian/' directory.
+
+ -- Tiago Ilieve <tiago.myhro@gmail.com>  Wed, 13 Apr 2016 10:18:30 -0300
+
 bootstrap-vz (0.9.9-2) unstable; urgency=medium
 
   * Removing not used files from binary package Closes: #804642
