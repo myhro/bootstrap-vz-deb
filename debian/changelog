@@ -12,6 +12,7 @@ bootstrap-vz (0.9.9-3) UNRELEASED; urgency=medium
     - Add 'parted' as suggested package, as sometimes 'kpartx' isn't enough and
     an error is raised asking for installing 'parted' as well.
     - Add 'python-sphinx' to Build-Depends.
+    - Add 'wget' to 'Suggests', as it is used by some providers and plugins.
     - Bump Standards-Version to 3.9.7 (no changes).
     - Shorten short-description to fit in less than 60 chars, needed to append
     '(Docs)' to the description of 'bootstrap-vz-doc'.
@@ -22,6 +23,8 @@ bootstrap-vz (0.9.9-3) UNRELEASED; urgency=medium
   * debian/rules:
     - Add 'override_dh_auto_build' to generate the HTML documentation during
     build time with Sphinx.
+    - Add 'override_dh_compress' to prevent the HTML documentation from being
+    compressed, which may change some filenames rendering its links broken.
     - Add 'override_dh_installchangelogs', as it was grabbing the wrong upstream
     changelog file. (Closes: #820607)
     - Extend 'override_dh_auto_clean' to remove unneeded files after
