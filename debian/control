@@ -28,6 +28,7 @@ Depends: debootstrap,
 Recommends: qemu-utils
 Suggests: euca2ools,
           kpartx,
+          parted,
           virtualbox-guest-additions-iso,
           zerofree
 Description: Software for creating Debian images for use in public or private clouds
