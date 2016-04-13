@@ -11,8 +11,8 @@ Build-Depends: debhelper (>= 9),
 Standards-Version: 3.9.7
 X-Python-Version: >= 2.7
 Homepage: https://github.com/andsens/bootstrap-vz
-Vcs-Git: https://anonscm.debian.org/cgit/cloud/bootstrap-vz.git
-Vcs-Browser: https://anonscm.debian.org/gitweb/?p=cloud/bootstrap-vz.git;a=summary
+Vcs-Git: https://anonscm.debian.org/git/cloud/bootstrap-vz.git
+Vcs-Browser: https://anonscm.debian.org/git/cloud/bootstrap-vz.git
 
 Package: bootstrap-vz
 Architecture: all
