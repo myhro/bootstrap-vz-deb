@@ -13,7 +13,7 @@ override_dh_auto_clean:
 	dh_auto_clean
 	rm -rf build/
 	rm -rf *.egg-info/
-	# Remove rst files cached by Sphinx
+	# Remove files cached by Sphinx
 	rm -f docs/_static/graph.json
 	find docs/plugins/ docs/providers/ -type f | egrep -v '(gitignore|index)' | xargs rm -f
 
