@@ -32,6 +32,7 @@ Suggests: bootstrap-vz-doc,
           kpartx,
           parted,
           virtualbox-guest-additions-iso,
+          wget,
           zerofree
 Description: Tool for creating Debian images for cloud platforms
  It's a software for creating Debian images to run on public or private clouds
