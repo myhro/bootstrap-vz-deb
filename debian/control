@@ -19,6 +19,8 @@ Package: python-bootstrap-vz
 Architecture: all
 Depends: ${misc:Depends},
          ${python:Depends}
+Breaks: bootstrap-vz (<< 0.9.10)
+Replaces: bootstrap-vz (<< 0.9.10)
 Description: Tool for creating Debian images for cloud platforms (Library)
  It's a software for creating Debian images to run on public or private clouds
  (Amazon, Google, OpenStack, Eucaliptus, etc).
