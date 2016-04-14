@@ -1,4 +1,5 @@
 ---
+name: debian-{system.release}-{system.architecture}-{%y}{%m}{%d}
 provider:
   name: azure
   waagent:
@@ -6,9 +7,6 @@ provider:
 bootstrapper:
   mirror: http://httpredir.debian.org/debian/
   workspace: /target
-image:
-  name: debian-{system.release}-{system.architecture}-{%y}{%m}{%d}
-  description: Debian {system.release} {system.architecture}
 system:
   release: jessie
   architecture: amd64
@@ -17,7 +15,7 @@ system:
   locale: en_US
   timezone: UTC
 volume:
-  backing: raw
+  backing: vhd
   partitions:
     type: msdos
     root:

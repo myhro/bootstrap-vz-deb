@@ -14,7 +14,7 @@ when doing this multiple times SSHing into the machines and copying the
 manifests can be a hassle.
 
 Lastly, the main motivation for supporting remote bootstrapping is the
-automation of `integration testing <../../tests/integration>`__.
+automation of `system testing <../../tests/system>`__.
 As you will see `further down <#bootstrap-vz-remote>`__,
 bootstrap-vz is able to select which build server is required
 for a specific test and run the bootstrapping procedure on said server.
@@ -63,7 +63,7 @@ The file ``build-servers.yml`` informs bootstrap-vz about the different
 build servers you have at your disposal.
 In its simplest form you can just add your own machine like this:
 
-.. code:: yaml
+.. code-block:: yaml
 
   local:
     type: local
@@ -94,7 +94,7 @@ Remote settings
 The other (and more interesting) setting for ``type`` is ``ssh``,
 which requires a few more configuration settings:
 
-.. code:: yaml
+.. code-block:: yaml
 
   local_vm:
     type: ssh
@@ -141,7 +141,7 @@ This is useful when for example the VirtualBox guest additions ISO is located
 at ``/root/guest_additions.iso`` on server 1, while server 2 has it at
 ``/root/images/vbox.iso``.
 
-.. code:: yaml
+.. code-block:: yaml
 
   local:
     type: local
@@ -165,7 +165,30 @@ at ``/root/guest_additions.iso`` on server 1, while server 2 has it at
 * ``guest_additions`` specifies the path to the VirtualBox guest additions ISO
   on the remote machine.
 * ``apt_proxy`` sets the configuration for the `apt_proxy plugin <../plugins/apt_proxy>`.
-* ``ec2-credentials`` contains all the settings you know from EC2 manifests,
-  note that when running `integration tests <../../tests/integration>`__,
-  these credentials are also used when running instances.
+* ``ec2-credentials`` contains all the settings you know from EC2 manifests.
 * ``s3-region`` overrides the s3 bucket region when bootstrapping S3 backed images.
+
+
+Run settings
+~~~~~~~~~~~~~~
+The run settings hold information about how to start a bootstrapped image.
+This is useful only when running system tests.
+
+.. code-block:: yaml
+
+  local:
+    type: local
+    can_bootstrap:
+      - ec2-s3
+    release: jessie
+    run_settings:
+      ec2-credentials:
+        access-key: AFAKEACCESSKEYFORAWS
+        secret-key: thes3cr3tkeyf0ryourawsaccount/FS4d8Qdva
+      docker:
+        machine: default
+
+* ``ec2-credentials`` contains the access key and secret key used to boot
+  an EC2 AMI.
+* ``docker.machine`` The docker machine on which an image built for docker
+  should run.

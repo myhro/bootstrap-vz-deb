@@ -27,6 +27,11 @@ class Manifest(object):
 		if path is None and data is None:
 			raise ManifestError('`path\' or `data\' must be provided')
 		self.path = path
+
+		import os.path
+		self.metaschema = load_data(os.path.normpath(os.path.join(os.path.dirname(__file__),
+		                                                          'metaschema.json')))
+
 		self.load_data(data)
 		self.load_modules()
 		self.validate()
@@ -100,9 +105,9 @@ class Manifest(object):
 		don't have to access information with info.manifest.data['section']
 		but can do it with info.manifest.section.
 		"""
+		self.name         = self.data['name']
 		self.provider     = self.data['provider']
 		self.bootstrapper = self.data['bootstrapper']
-		self.image        = self.data['image']
 		self.volume       = self.data['volume']
 		self.system       = self.data['system']
 		from bootstrapvz.common.releases import get_release
@@ -121,7 +126,9 @@ class Manifest(object):
 		import jsonschema
 
 		schema = load_data(schema_path)
+
 		try:
+			jsonschema.validate(schema, self.metaschema)
 			jsonschema.validate(data, schema)
 		except jsonschema.ValidationError as e:
 			self.validation_error(e.message, e.path)
@@ -139,10 +146,12 @@ class Manifest(object):
 	def __getstate__(self):
 		return {'__class__': self.__module__ + '.' + self.__class__.__name__,
 		        'path': self.path,
+		        'metaschema': self.metaschema,
 		        'data': self.data}
 
 	def __setstate__(self, state):
 		self.path = state['path']
+		self.metaschema = state['metaschema']
 		self.load_data(state['data'])
 		self.load_modules()
 		self.validate()

@@ -57,9 +57,24 @@ class AdjustExpandRootScript(Task):
 
 	@classmethod
 	def run(cls, info):
-		import os.path
 		from ..tools import sed_i
 		script = os.path.join(info.root, 'etc/init.d/expand-root')
+
 		root_idx = info.volume.partition_map.root.get_index()
-		device_path = 'device_path="/dev/xvda{idx}"'.format(idx=root_idx)
-		sed_i(script, '^device_path="/dev/xvda"$', device_path)
+		root_index_line = 'root_index="{idx}"'.format(idx=root_idx)
+		sed_i(script, '^root_index="0"$', root_index_line)
+
+		root_device_path = 'root_device_path="{device}"'.format(device=info.volume.device_path)
+		sed_i(script, '^root_device_path="/dev/xvda"$', root_device_path)
+
+
+class AdjustGrowpartWorkaround(Task):
+	description = 'Adjusting expand-root for growpart-workaround'
+	phase = phases.system_modification
+	predecessors = [AdjustExpandRootScript]
+
+	@classmethod
+	def run(cls, info):
+		from ..tools import sed_i
+		script = os.path.join(info.root, 'etc/init.d/expand-root')
+		sed_i(script, '^growpart="growpart"$', 'growpart-workaround')
