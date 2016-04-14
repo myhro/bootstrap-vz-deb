@@ -1,7 +1,8 @@
-bootstrap-vz (0.9.9-3) UNRELEASED; urgency=medium
+bootstrap-vz (0.9.10-1) UNRELEASED; urgency=medium
 
+  * New upstream release.
   * Add 'bootstrap-vz-doc' package with Sphinx docs:
-    - Add '0003-remove-taskoverview-from-html-documentation.patch' to prevent
+    - Add '0001-remove-taskoverview-from-html-documentation.patch' to prevent
     the resulting HTML pages from fetching external JS files, fixing litian's
     'privacy-breach-generic' complaint.
     - Register its documents with 'doc-base'.
@@ -34,6 +35,9 @@ bootstrap-vz (0.9.9-3) UNRELEASED; urgency=medium
     changelog file. (Closes: #820607)
     - Extend 'override_dh_auto_clean' to remove unneeded files after
     generating the documentation.
+  * Drop patches that were integrated upstream:
+    - '0001-Excluding-docs-from-binary-package.patch'
+    - '0002-Vbox-guest-additions-iso-path-fix.patch'
   * Prepend 'bootstrap-vz.' to 'install' and 'links' files:
     - Change entry point scripts to custom versions in 'debian/bin/', avoiding
     the 'pkg_resources.DistributionNotFound' error.

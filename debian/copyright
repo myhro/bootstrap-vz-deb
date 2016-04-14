@@ -3,7 +3,7 @@ Upstream-Name: bootstrap-vz
 Source: https://github.com/andsens/bootstrap-vz
 
 Files: *
-Copyright: 2012-2015 Anders Ingemann <anders@ingemann.de>
+Copyright: 2012-2016 Anders Ingemann <anders@ingemann.de>
 License: Apache-2.0
 
 Files: bootstrapvz/common/minify_json.py
