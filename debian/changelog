@@ -20,8 +20,8 @@ bootstrap-vz (0.9.10-1) UNRELEASED; urgency=medium
     - Add 'python-sphinx' to Build-Depends.
     - Add 'wget' to 'Suggests', as it is used by some providers and plugins.
     - Bump Standards-Version to 3.9.7 (no changes).
-    - Shorten short-description to fit in less than 60 chars, needed to append
-    '(Docs)' to the description of 'bootstrap-vz-doc'.
+    - Shorten short-description to fit in less than 60 chars, needed, for
+    instance, to append '(Docs)' to the description of 'bootstrap-vz-doc'.
   * debian/copyright:
     - Add copyright for Amazon and myself.
     - Bump years for Anders Ingemann and Marcin Kulisz.
@@ -31,17 +31,23 @@ bootstrap-vz (0.9.10-1) UNRELEASED; urgency=medium
     build time with Sphinx.
     - Add 'override_dh_compress' to prevent the HTML documentation from being
     compressed, which may change some filenames rendering its links broken.
+    - Add 'override_dh_install' to remove entry point scripts from the library
+    package.
     - Add 'override_dh_installchangelogs', as it was grabbing the wrong upstream
     changelog file. (Closes: #820607)
+    - Build with Pybuild.
     - Extend 'override_dh_auto_clean' to remove unneeded files after
     generating the documentation.
   * Drop patches that were integrated upstream:
     - '0001-Excluding-docs-from-binary-package.patch'
     - '0002-Vbox-guest-additions-iso-path-fix.patch'
-  * Prepend 'bootstrap-vz.' to 'install' and 'links' files:
-    - Change entry point scripts to custom versions in 'debian/bin/', avoiding
-    the 'pkg_resources.DistributionNotFound' error.
-    - Fix Python scripts not being packaged in 'boostrap-vz.install'.
+  * Split binary packages between application (bootstrap-vz) and library
+    (python-bootstrap-vz):
+    - Add custom entry point scripts to 'bootstrap-vz.install'.
+    - Move assets to 'python-bootstrap-vz.install'.
+    - Move 'script-not-executable' to 'python-bootstrap-vz.lintian-overrides'.
+    - Remove hardcoded Python dependencies, as there's already
+     a '${python:Depends}' entry.
   * Update Vcs URLs to the same on the Alioth web page.
   * wrap-and-sort the 'debian/' directory.
 
