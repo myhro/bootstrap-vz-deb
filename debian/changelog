@@ -34,6 +34,8 @@ bootstrap-vz (0.9.9-3) UNRELEASED; urgency=medium
     changelog file. (Closes: #820607)
     - Extend 'override_dh_auto_clean' to remove unneeded files after
     generating the documentation.
+  * Prepend 'bootstrap-vz.' to 'install' and 'links' files:
+    - Fix Python scripts not being packaged in 'boostrap-vz.install'.
   * Update Vcs URLs to the same on the Alioth web page.
   * wrap-and-sort the 'debian/' directory.
 
