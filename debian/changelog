@@ -7,6 +7,11 @@ bootstrap-vz (0.9.9-3) UNRELEASED; urgency=medium
     - Register its documents with 'doc-base'.
     - Remove 'bootstrap-vz.3' man page generated generated from the same
     documentation source.
+  * Add support for checking signed upstream tarballs:
+    - Add Anders Ingemann (0D800D0D) and my (EF93257A) GPG keys to
+    'debian/upstream/signing-key.asc'.
+    - debian/watch: add 'pgpsigurlmangle' option.
+    - Remove 'debian-watch-may-check-gpg-signature' lintian override.
   * debian/control:
     - Add 'bootstrap-vz-doc' as 'bootstrap-vz' suggested package.
     - Add 'parted' as suggested package, as sometimes 'kpartx' isn't enough and
