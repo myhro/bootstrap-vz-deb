@@ -1,0 +1,36 @@
+---
+name: debian-{system.release}-{system.architecture}-{%y}{%m}{%d}:latest
+provider:
+  name: docker
+  labels:
+    description: Debian {system.release} {system.architecture}
+  dockerfile: >
+    CMD /bin/bash
+bootstrapper:
+  workspace: /target
+  variant: minbase
+system:
+  release: jessie
+  architecture: amd64
+  bootloader: none
+  charmap: UTF-8
+  locale: en_US
+  timezone: UTC
+packages: {}
+volume:
+  backing: folder
+  partitions:
+    type: none
+    root:
+      filesystem: ext4
+      size: 1GiB
+plugins:
+  minimize_size:
+    apt:
+      autoclean: true
+      languages: [none]
+      gzip_indexes: true
+      autoremove_suggests: true
+    dpkg:
+      locales: []
+      exclude_docs: true

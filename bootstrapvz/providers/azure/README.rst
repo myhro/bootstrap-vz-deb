@@ -4,18 +4,33 @@ Azure
 This provider generates raw images for Microsoft Azure computing
 platform.
 
-Setup
------
 
-qemu-img >= 1.7.0 required to convert raw image to vhd fixed size disk.
-This release is available in wheezy-backports.
+Manifest settings
+-----------------
 
-*wget* must be installed on local computer.
+Provider
+~~~~~~~~
 
-Manifest must use the *raw* format, provider will automatically
-transform the disk to a vhd disk format.
+-  ``waagent``: Waagent specific settings.
+   ``required``
 
-Do not create swap space on the OS disk:
+    -  ``conf``: Path to ``waagent.conf`` that should override the default
+       ``optional``
+    -  ``version``: Version of waagent to install.
+       Waagent versions are available at:
+       https://github.com/Azure/WALinuxAgent/releases
+       ``required``
+
+Example:
+
+.. code-block:: yaml
+
+    ---
+    provider:
+      name: azure
+      waagent:
+        conf: /root/waagent.conf
+        version: 2.0.4
 
 The Windows Azure Linux Agent can automatically configure swap space
 using the local resource disk that is attached to the VM after
@@ -30,17 +45,3 @@ provisioning on Azure. Modify the following parameters in
     ResourceDisk.EnableSwap=y
     ResourceDisk.SwapSizeMB=2048    ## NOTE: set this to whatever you need it to be.
 
-You can specify a waagent.conf file to replace the default one in the
-manifest in the azure/waagent section of the provider:
-
-::
-
-    "system" : { 
-        "waagent" : {
-           "conf": "path_to_my_conf_file",  # optional
-           "version" : "2.0.4"              # mandatory
-        }
-    }, ...
-
-Waagent versions are available at:
-https://github.com/Azure/WALinuxAgent/releases

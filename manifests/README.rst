@@ -26,6 +26,26 @@ Sections
 
 The manifest is split into 7 sections.
 
+Name
+~~~~~
+
+Single string property that specifies the name of the image.
+
+-  ``name``: The name of the resulting image.
+   When bootstrapping cloud images, this would be the name visible in
+   the interface when booting up new instances.
+   When bootstrapping for VirtualBox or kvm, it's the filename of the
+   image.
+   ``required``
+   ``manifest vars``
+
+Example:
+
+.. code:: yaml
+
+    ---
+    name: debian-{system.release}-{system.architecture}-{%Y}-{%m}-{%d}-ebs
+
 Provider
 ~~~~~~~~
 
@@ -37,6 +57,15 @@ name of the provider itself.
 
 Consult the `providers <../bootstrapvz/providers>`__ section of the documentation
 for a list of valid values.
+
+
+Example:
+
+.. code:: yaml
+
+    ---
+    provider:
+      name: ec2
 
 Bootstrapper
 ~~~~~~~~~~~~
@@ -71,35 +100,28 @@ are 4 possible settings:
 -  ``exclude_packages``: Packages to exclude during bootstrap phase.
    Accepts a list of package names.
    ``optional``
--  ``guest_additions``: This setting is only relevant for the
-   `virtualbox provider <../bootstrapvz/providers/virtualbox>`__.
-   It specifies the path to the VirtualBox Guest Additions ISO, which, when specified,
-   will be mounted and used to install the VirtualBox Guest Additions.
-   ``optional``
+-  ``variant``: Debian variant to install. The only supported value
+   is ``minbase`` and should only be used in conjunction with the
+   Docker provider. Not specifying this option will result in a normal
+   Debian variant being bootstrapped.
 
-Image
-~~~~~
 
-The image section configures anything pertaining directly to the image
-that will be created.
+Example:
 
--  ``name``: The name of the resulting image.
-   When bootstrapping cloud images, this would be the name visible in
-   the interface when booting up new instances.
-   When bootstrapping for VirtualBox or kvm, it's the filename of the
-   image.
-   ``required``
-   ``manifest vars``
--  ``description``: Description of the image. Where this setting is
-   used depends highly on which provider is set. At the moment it is
-   only used for AWS images.
-   ``required for ec2 provider``
-   ``manifest vars``
--  ``bucket``: When bootstrapping an S3 backed image for AWS, this
-   will be the bucket where the image is uploaded to.
-   ``required for S3 backing``
--  ``region``: Region in which the AMI should be registered.
-   ``required for S3 backing``
+.. code:: yaml
+
+    ---
+    bootstrapper:
+      workspace: /target
+      tarball: true
+      mirror: http://httpredir.debian.org/debian/
+      include_packages:
+         - whois
+         - psmisc
+      exclude_packages:
+         - isc-dhcp-client
+         - isc-dhcp-common
+      variant: minbase
 
 System
 ~~~~~~
@@ -132,6 +154,20 @@ system and does not fit under any other section.
    Valid values: Any filename from ``/usr/share/zoneinfo``
    ``required``
 
+Example:
+
+.. code:: yaml
+
+    ---
+    system:
+      release: jessie
+      architecture: amd64
+      bootloader: extlinux
+      charmap: UTF-8
+      hostname: jessie x86_64
+      locale: en_US
+      timezone: UTC
+
 Packages
 ~~~~~~~~
 
@@ -162,8 +198,9 @@ variety of sources.
    Default: ``http://httpredir.debian.org/debian/``
 -  ``sources``: A map of additional sources that should be added to
    the aptitude sources list. The key becomes the filename in
-   ``/etc/apt/sources.list.d/`` (with ``.list`` appended to it), while
-   the value is an array with each entry being a line.
+   ``/etc/apt/sources.list.d/`` (with ``.list`` appended to it), except
+   for ``main``, which designates ``/etc/apt/sources.list``.
+   The value is an array with each entry being a line.
    ``optional``
 -  ``components``: A list of components that should be added to the
    default apt sources. For example ``contrib`` or ``non-free``
@@ -173,6 +210,11 @@ variety of sources.
    be added to the aptitude keyring of trusted signatures for
    repositories.
    ``optional``
+-  ``apt.conf.d``: A map of ``apt.conf(5)`` configuration snippets.
+   The key become the filename in ``/etc/apt/apt.conf.d``, except
+   ``main`` which designates ``/etc/apt/apt.conf``.
+   The value is a string in the ``apt.conf(5)`` syntax.
+   ``optional``
 -  ``preferences``: Allows you to pin packages through `apt
    preferences <https://wiki.debian.org/AptPreferences>`__. The setting
    is an object where the key is the preference filename in
@@ -181,9 +223,47 @@ variety of sources.
    specified.
    ``optional``
    The values are objects with three keys:
--  ``package``: The package to pin (wildcards allowed)
--  ``pin``: The release to pin the package to.
--  ``pin-priority``: The priority of this pin.
+
+   -  ``package``: The package to pin (wildcards allowed)
+   -  ``pin``: The release to pin the package to.
+   -  ``pin-priority``: The priority of this pin.
+
+Example:
+
+.. code:: yaml
+
+    ---
+    packages:
+      install:
+        - /root/packages/custom_app.deb
+        - puppet
+      install_standard: true
+      mirror: http://cloudfront.debian.net/debian
+      sources:
+        puppet:
+          - deb http://apt.puppetlabs.com wheezy main dependencies
+      components:
+        - contrib
+        - non-free
+      trusted-keys:
+        - /root/keys/puppet.gpg
+      apt.conf.d:
+        00InstallRecommends: >-
+	  APT::Install-Recommends "false";
+	  APT::Install-Suggests   "false";
+	00IPv4: 'Acquire::ForceIPv4 "false";'
+      preferences:
+        main:
+          - package: *
+            pin: release o=Debian, n=wheezy
+            pin-priority: 800
+          - package: *
+            pin: release o=Debian Backports, a=wheezy-backports, n=wheezy-backports
+            pin-priority: 760
+          - package: puppet puppet-common
+            pin: version 2.7.25-1puppetlabs1
+            pin-priority: 840
+
 
 Volume
 ~~~~~~
@@ -234,9 +314,38 @@ boot, root and swap.
       this partition.
       ``optional``
 
+Example:
+
+.. code:: yaml
+
+    ---
+    volume:
+      backing: vdi
+      partitions:
+        type: msdos
+        boot:
+          filesystem: ext2
+          size: 32MiB
+        root:
+          filesystem: ext4
+          size: 864MiB
+        swap:
+          size: 128MiB
+
 Plugins
 ~~~~~~~
 
 The plugins section is a map of plugin names to whatever configuration a
 plugin requires. Go to the `plugin section <../bootstrapvz/plugins>`__
 of the documentation, to see the configuration for a specific plugin.
+
+
+Example:
+
+.. code:: yaml
+
+    ---
+    plugins:
+      minimize_size:
+        zerofree: true
+        shrink: true

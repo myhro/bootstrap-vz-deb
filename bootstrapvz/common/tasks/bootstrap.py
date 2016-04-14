@@ -21,6 +21,8 @@ def get_bootstrap_args(info):
 	executable = ['debootstrap']
 	arch = info.manifest.system.get('userspace_architecture', info.manifest.system.get('architecture'))
 	options = ['--arch=' + arch]
+	if 'variant' in info.manifest.bootstrapper:
+		options.append('--variant=' + info.manifest.bootstrapper['variant'])
 	if len(info.include_packages) > 0:
 		options.append('--include=' + ','.join(info.include_packages))
 	if len(info.exclude_packages) > 0:
@@ -47,14 +49,14 @@ class MakeTarball(Task):
 	@classmethod
 	def run(cls, info):
 		executable, options, arguments = get_bootstrap_args(info)
-		info.tarball = get_tarball_filename(info)
-		if os.path.isfile(info.tarball):
+		tarball = get_tarball_filename(info)
+		if os.path.isfile(tarball):
 			log.debug('Found matching tarball, skipping creation')
 		else:
 			from ..tools import log_call
-			status, out, err = log_call(executable + options + ['--make-tarball=' + info.tarball] + arguments)
-			if status != 1:
-				msg = 'debootstrap exited with status {status}, it should exit with status 1'.format(status=status)
+			status, out, err = log_call(executable + options + ['--make-tarball=' + tarball] + arguments)
+			if status not in [0, 1]:  # variant=minbase exits with 0
+				msg = 'debootstrap exited with status {status}, it should exit with status 0 or 1'.format(status=status)
 				raise TaskError(msg)
 
 
@@ -66,15 +68,28 @@ class Bootstrap(Task):
 	@classmethod
 	def run(cls, info):
 		executable, options, arguments = get_bootstrap_args(info)
-		info.tarball = get_tarball_filename(info)
-		if os.path.isfile(info.tarball):
+		tarball = get_tarball_filename(info)
+		if os.path.isfile(tarball):
 			if not info.manifest.bootstrapper.get('tarball', False):
 				# Only shows this message if it hasn't tried to create the tarball
 				log.debug('Found matching tarball, skipping download')
-			options.extend(['--unpack-tarball=' + info.tarball])
+			options.extend(['--unpack-tarball=' + tarball])
 
-		from ..tools import log_check_call
-		log_check_call(executable + options + arguments)
+		if info.bootstrap_script is not None:
+			# Optional bootstrapping script to modify the bootstrapping process
+			arguments.append(info.bootstrap_script)
+
+		try:
+			from ..tools import log_check_call
+			log_check_call(executable + options + arguments)
+		except KeyboardInterrupt:
+			# Sometimes ../root/sys and ../root/proc are still mounted when
+			# quitting debootstrap prematurely. This break the cleanup process,
+			# so we unmount manually (ignore the exit code, the dirs may not be mounted).
+			from ..tools import log_call
+			log_call(['umount', os.path.join(info.root, 'sys')])
+			log_call(['umount', os.path.join(info.root, 'proc')])
+			raise
 
 
 class IncludePackagesInBootstrap(Task):

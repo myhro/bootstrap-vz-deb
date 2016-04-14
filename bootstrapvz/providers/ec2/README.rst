@@ -53,7 +53,7 @@ under the ``provider`` section.
 
 Example:
 
-.. code:: yaml
+.. code-block:: yaml
 
     ---
     provider:
@@ -78,7 +78,7 @@ __ http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/virtualization_types.html
 
 Example:
 
-.. code:: yaml
+.. code-block:: yaml
 
     ---
     provider:
@@ -96,13 +96,36 @@ __ http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking.html
 
 Example:
 
-.. code:: yaml
+.. code-block:: yaml
 
     ---
     provider:
       name: ec2
       virtualization: hvm
       enhanced_networking: simple
+
+Image
+~~~~~
+
+-  ``description``: Description of the AMI.
+   ``manifest vars``
+-  ``bucket``: When bootstrapping an S3 backed image, this
+   will be the bucket where the image is uploaded to.
+   ``required for S3 backing``
+-  ``region``: Region in which the AMI should be registered.
+   ``required for S3 backing``
+
+Example:
+
+.. code-block:: yaml
+
+    ---
+    provider:
+      name: ec2
+      description: Debian {system.release} {system.architecture}
+      bucket: debian-amis
+      region: us-west-1
+
 
 Dependencies
 ------------

@@ -16,6 +16,7 @@ from tasks import network
 from tasks import initd
 from tasks import ssh
 from tasks import kernel
+from tasks import folder
 
 
 def get_standard_groups(manifest):
@@ -32,7 +33,7 @@ def get_standard_groups(manifest):
 	group.extend(get_network_group(manifest))
 	group.extend(get_apt_group(manifest))
 	group.extend(security_group)
-	group.extend(locale_group)
+	group.extend(get_locale_group(manifest))
 	group.extend(get_bootloader_group(manifest))
 	group.extend(cleanup_group)
 	return group
@@ -94,6 +95,9 @@ ssh_group = [ssh.AddOpenSSHPackage,
 
 
 def get_network_group(manifest):
+	if manifest.bootstrapper.get('variant', None) == 'minbase':
+		# minbase has no networking
+		return []
 	group = [network.ConfigureNetworkIF,
 	         network.RemoveDNSInfo]
 	if manifest.system.get('hostname', False):
@@ -121,6 +125,8 @@ def get_apt_group(manifest):
 	if 'preferences' in manifest.packages:
 		group.append(apt.AddManifestPreferences)
 		group.append(apt.WritePreferences)
+	if 'apt.conf.d' in manifest.packages:
+		group.append(apt.WriteConfiguration)
 	if 'install' in manifest.packages:
 		group.append(packages.AddManifestPackages)
 	if manifest.packages.get('install_standard', False):
@@ -129,10 +135,19 @@ def get_apt_group(manifest):
 
 security_group = [security.EnableShadowConfig]
 
-locale_group = [locale.LocaleBootstrapPackage,
-                locale.GenerateLocale,
-                locale.SetTimezone,
-                ]
+
+def get_locale_group(manifest):
+	from bootstrapvz.common.releases import jessie
+	group = [
+		locale.LocaleBootstrapPackage,
+		locale.GenerateLocale,
+		locale.SetTimezone,
+	]
+	if manifest.release > jessie:
+		group.append(locale.SetLocalTimeLink)
+	else:
+		group.append(locale.SetLocalTimeCopy)
+	return group
 
 
 def get_bootloader_group(manifest):
@@ -182,6 +197,7 @@ rollback_map = {workspace.CreateWorkspace:  workspace.DeleteWorkspace,
                 partitioning.MapPartitions: partitioning.UnmapPartitions,
                 filesystem.CreateMountDir:  filesystem.DeleteMountDir,
                 filesystem.MountRoot:       filesystem.UnmountRoot,
+                folder.Create:              folder.Delete,
                 }
 
 
