@@ -1,7 +1,8 @@
 #!/usr/bin/make -f
 #export DH_VERBOSE=1
 
-export PYBUILD_NAME=bootstrap-vz
+export PYBUILD_DESTDIR=debian/bootstrap-vz
+export PYBUILD_INSTALL_ARGS=--install-lib=/usr/share/bootstrap-vz/ --install-scripts=/usr/share/bootstrap-vz/
 
 %:
 	dh $@ --with python2,sphinxdoc --buildsystem=pybuild
@@ -25,12 +26,6 @@ override_dh_compress:
 	# Files from the HTML documentation should not be compressed, as they may
 	# render in broken links
 	dh_compress --exclude "bootstrap-vz-doc/html/"
-
-
-override_dh_install:
-	dh_install
-	# Remove entry point scripts from the library package
-	rm debian/python-bootstrap-vz/usr/bin/*
 
 
 override_dh_installchangelogs:

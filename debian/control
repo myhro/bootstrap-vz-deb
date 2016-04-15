@@ -1,5 +1,5 @@
 Source: bootstrap-vz
-Section: python
+Section: admin
 Priority: optional
 Maintainer: Debian Cloud Team <cloud-packages@lists.alioth.debian.org>
 Uploaders: Marcin Kulisz (kuLa) <debian@kulisz.net>,
@@ -15,25 +15,9 @@ Homepage: https://github.com/andsens/bootstrap-vz
 Vcs-Git: https://anonscm.debian.org/git/cloud/bootstrap-vz.git
 Vcs-Browser: https://anonscm.debian.org/git/cloud/bootstrap-vz.git
 
-Package: python-bootstrap-vz
-Architecture: all
-Depends: ${misc:Depends},
-         ${python:Depends}
-Breaks: bootstrap-vz (<< 0.9.10)
-Replaces: bootstrap-vz (<< 0.9.10)
-Description: Tool for creating Debian images for cloud platforms (Library)
- It's a software for creating Debian images to run on public or private clouds
- (Amazon, Google, OpenStack, Eucaliptus, etc).
- It's using bootstraping as a method for creating images. Images created by this
- tool are fully operational Debian Images for Cloud.
- .
- This package contains the Python library.
-
 Package: bootstrap-vz
-Section: admin
 Architecture: all
 Depends: debootstrap,
-         python-bootstrap-vz (= ${binary:Version}),
          ${misc:Depends},
          ${python:Depends}
 Recommends: qemu-utils
@@ -44,20 +28,18 @@ Suggests: bootstrap-vz-doc,
           virtualbox-guest-additions-iso,
           wget,
           zerofree
-Description: Tool for creating Debian images for cloud platforms (CLI)
+Description: tool for creating Debian images for cloud platforms (CLI)
  It's a software for creating Debian images to run on public or private clouds
  (Amazon, Google, OpenStack, Eucaliptus, etc).
  It's using bootstraping as a method for creating images. Images created by this
  tool are fully operational Debian Images for Cloud.
- .
- This package contains the command-line binaries.
 
 Package: bootstrap-vz-doc
 Section: doc
 Architecture: all
 Depends: ${misc:Depends},
          ${sphinxdoc:Depends}
-Description: Tool for creating Debian images for cloud platforms (Docs)
+Description: tool for creating Debian images for cloud platforms (Docs)
  It's a software for creating Debian images to run on public or private clouds
  (Amazon, Google, OpenStack, Eucaliptus, etc).
  It's using bootstraping as a method for creating images. Images created by this

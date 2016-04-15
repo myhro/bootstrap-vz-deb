@@ -1,3 +1,2 @@
-debian/bin/bootstrap-vz usr/bin/
-debian/bin/bootstrap-vz-remote usr/bin/
-debian/bin/bootstrap-vz-server usr/bin/
+bootstrapvz/common/assets usr/share/bootstrap-vz/bootstrapvz/common/
+bootstrapvz/providers/ec2/assets usr/share/bootstrap-vz/bootstrapvz/providers/ec2/

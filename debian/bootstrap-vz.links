@@ -1,1 +1,4 @@
+usr/share/bootstrap-vz/bootstrap-vz usr/bin/bootstrap-vz
+usr/share/bootstrap-vz/bootstrap-vz-remote usr/bin/bootstrap-vz-remote
+usr/share/bootstrap-vz/bootstrap-vz-server usr/bin/bootstrap-vz-server
 usr/share/man/man1/bootstrap-vz-remote.1.gz usr/share/man/man1/bootstrap-vz-server.1.gz
