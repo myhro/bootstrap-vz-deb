@@ -26,6 +26,7 @@ bootstrap-vz (0.9.10-1) UNRELEASED; urgency=medium
     instance, to append '(Docs)' to the description of 'bootstrap-vz-doc'.
   * debian/copyright:
     - Add copyright for Amazon and myself.
+    - Change 'debian/*' license from GPL-2+ to Apache-2.0.
     - Bump years for Anders Ingemann and Marcin Kulisz.
     - Move license texts to the bottom of the file.
   * debian/rules:
