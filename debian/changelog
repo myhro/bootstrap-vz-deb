@@ -8,6 +8,8 @@ bootstrap-vz (0.9.10-1) UNRELEASED; urgency=medium
     - Register its documents with 'doc-base'.
     - Remove 'bootstrap-vz.3' man page generated generated from the same
     documentation source.
+  * Add '0002-move-pyro4-dependency.patch' to fix the missing dependency of
+    Pyro4.
   * Add support for checking signed upstream tarballs:
     - Add Anders Ingemann (0D800D0D) and my (EF93257A) GPG keys to
     'debian/upstream/signing-key.asc'.
