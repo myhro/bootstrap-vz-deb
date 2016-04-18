@@ -2,16 +2,16 @@ bootstrap-vz (0.9.10-1) UNRELEASED; urgency=medium
 
   * New upstream release.
   * Add 'bootstrap-vz-doc' package with Sphinx docs:
-    - Add '0001-remove-taskoverview-from-html-documentation.patch' to prevent
-    the resulting HTML pages from fetching external JS files, fixing litian's
+    - Add '0001-remove-taskoverview-from-docs.patch' to prevent the resulting
+    HTML pages from fetching external JS files, fixing litian's
     'privacy-breach-generic' complaint.
-    - Add '0003-remove-github-links-from-docs.patch' as the generation of
+    - Add '0002-remove-github-links-from-docs.patch' as the generation of
     links to source code on GitHub isn't possible because they depend on the
     same commit hashes from the upstream repository.
     - Register its documents with 'doc-base'.
     - Remove 'bootstrap-vz.3' man page generated generated from the same
     documentation source.
-  * Add '0002-move-pyro4-dependency.patch' to fix the missing dependency of
+  * Add '0003-move-pyro4-dependency.patch' to fix the missing dependency of
     Pyro4.
   * Add support for checking signed upstream tarballs:
     - Add Anders Ingemann (0D800D0D) and my (EF93257A) GPG keys to
