@@ -5,6 +5,9 @@ bootstrap-vz (0.9.10-1) UNRELEASED; urgency=medium
     - Add '0001-remove-taskoverview-from-html-documentation.patch' to prevent
     the resulting HTML pages from fetching external JS files, fixing litian's
     'privacy-breach-generic' complaint.
+    - Add '0003-remove-github-links-from-docs.patch' as the generation of
+    links to source code on GitHub isn't possible because they depend on the
+    same commit hashes from the upstream repository.
     - Register its documents with 'doc-base'.
     - Remove 'bootstrap-vz.3' man page generated generated from the same
     documentation source.
